@@ -1,0 +1,6 @@
+/* FIX IPHONE 17 PRO MAX & UX (Smile PC Solutions) */
+:root { --safe-top: env(safe-area-inset-top, 20px); --safe-bottom: env(safe-area-inset-bottom, 20px); }
+body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); background-color: #F8F9FA; -webkit-tap-highlight-color: transparent; }
+header, nav, .navbar { position: fixed !important; top: 0; width: 100%; z-index: 10000; padding-top: var(--safe-top); background: rgba(255, 255, 255, 0.95) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: transform 0.3s; }
+.nav-hidden { transform: translateY(-100%); }
+[class*='chat'], [id*='chat'], .whatsapp-button { bottom: calc(20px + var(--safe-bottom)) !important; right: 20px !important; z-index: 99999 !important; border-radius: 50% !important; }
