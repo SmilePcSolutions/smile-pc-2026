@@ -10,26 +10,25 @@ export default function Contact() {
   const [errorMessage, setErrorMessage] = useState('');
   
   // Gestion Fichiers
-  const [fileNames, setFileNames] = useState<string[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileNames, setFileNames] = useState([]);
+  const fileInputRef = useRef(null);
 
   // Gestion Menu Sujet
   const [sujet, setSujet] = useState('');
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   
   const sujets = [
-    { value: 'Panne', label: 'Panne / Réparation', icon: <Wrench className="w-4 h-4 text-blue-500"/> },
-    { value: 'Devis', label: 'Demande de Devis', icon: <FileText className="w-4 h-4 text-green-500"/> },
-    { value: 'Virus', label: 'Virus / Lenteur', icon: <ShieldAlert className="w-4 h-4 text-red-500"/> },
-    { value: 'Données', label: 'Récupération Données', icon: <HardDrive className="w-4 h-4 text-purple-500"/> },
-    { value: 'Cours', label: 'Cours / Formation', icon: <GraduationCap className="w-4 h-4 text-yellow-500"/> },
-    { value: 'Autre', label: 'Autre demande', icon: <FileQuestion className="w-4 h-4 text-slate-500"/> },
+    { value: 'Panne', label: 'Panne / Réparation', icon: <Wrench className="w-4 h-4 text-blue-600"/> },
+    { value: 'Devis', label: 'Demande de Devis', icon: <FileText className="w-4 h-4 text-green-600"/> },
+    { value: 'Virus', label: 'Virus / Lenteur', icon: <ShieldAlert className="w-4 h-4 text-red-600"/> },
+    { value: 'Données', label: 'Récupération Données', icon: <HardDrive className="w-4 h-4 text-purple-600"/> },
+    { value: 'Cours', label: 'Cours / Formation', icon: <GraduationCap className="w-4 h-4 text-yellow-600"/> },
+    { value: 'Autre', label: 'Autre demande', icon: <FileQuestion className="w-4 h-4 text-slate-600"/> },
   ];
 
-  // Trouve l'option sélectionnée pour l'affichage
   const selectedOption = sujets.find(s => s.value === sujet);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const names = Array.from(files).map(f => f.name);
@@ -37,12 +36,12 @@ export default function Contact() {
     }
   };
 
-  const handleCustomSelect = (value: string) => {
+  const handleCustomSelect = (value) => {
     setSujet(value);
     setIsSelectOpen(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!sujet) {
       setErrorMessage("Merci de sélectionner un sujet.");
@@ -66,7 +65,7 @@ export default function Contact() {
       const result = await sendEmail(payload);
       if (result.success || result.data) setIsSuccess(true);
       else setErrorMessage(typeof result.error === 'string' ? result.error : 'Une erreur est survenue.');
-    } catch (error: any) {
+    } catch (error) {
       setErrorMessage("Erreur de connexion.");
     } finally {
       setIsSubmitting(false);
@@ -74,79 +73,109 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 md:p-6 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-4 font-sans">
       
-      {/* FOND D'AMBIANCE */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[-10%] right-[20%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] animate-pulse animation-delay-2000"></div>
-      </div>
-
-      {/* CONTENEUR CENTRAL */}
-      <div className="relative z-10 w-full max-w-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/50 dark:border-white/5 flex flex-col overflow-visible">
+      {/* CADRE PRINCIPAL : SPLIT SCREEN (Gauche Couleur / Droite Blanc) */}
+      <div className="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
         
-        {/* EN-TÊTE */}
-        <div className="text-center pt-10 pb-6 px-8 border-b border-slate-100 dark:border-slate-800/50">
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">Contactez-moi</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">Réponse rapide assurée sur Moyeuvre-Grande.</p>
+        {/* COLONNE GAUCHE : LE VISUEL FORT (Bleu Solide) */}
+        <div className="md:w-5/12 bg-blue-600 text-white p-10 flex flex-col justify-between relative">
+          {/* Cercle déco subtil */}
+          <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -ml-16 -mt-16 pointer-events-none"></div>
           
-          <div className="flex flex-wrap justify-center gap-4 mt-6 text-xs font-medium text-slate-600 dark:text-slate-300">
-            <a href="tel:+33600000000" className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-colors">
-              <Phone className="w-3.5 h-3.5 text-blue-500" /> 06 00 00 00 00
-            </a>
-            <a href="mailto:contact@smilepcsolutions.fr" className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-colors">
-              <Mail className="w-3.5 h-3.5 text-blue-500" /> contact@smilepcsolutions.fr
-            </a>
-            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700">
-              <MapPin className="w-3.5 h-3.5 text-blue-500" /> Moyeuvre-Grande
-            </span>
+          <div className="relative z-10">
+            <h2 className="text-3xl font-extrabold mb-6 tracking-tight">Contactez-moi</h2>
+            <p className="text-blue-100 text-lg mb-12 font-medium">
+              Une question technique ?<br/>
+              Besoin d'un devis ?<br/>
+              Je vous réponds rapidement.
+            </p>
+            
+            <div className="space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0 backdrop-blur-sm">
+                  <Phone className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Téléphone</p>
+                  <a href="tel:+33600000000" className="text-xl font-bold hover:text-blue-200 transition-colors">06 00 00 00 00</a>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0 backdrop-blur-sm">
+                  <Mail className="w-6 h-6 text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Email</p>
+                  <a href="mailto:contact@smilepcsolutions.fr" className="text-lg font-bold hover:text-blue-200 transition-colors truncate block">contact@smilepcsolutions.fr</a>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0 backdrop-blur-sm">
+                  <MapPin className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Zone</p>
+                  <p className="text-lg font-bold">Moyeuvre-Grande</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative z-10 mt-10 pt-6 border-t border-white/20 flex justify-between items-center text-sm font-medium">
+             <span>Lundi - Samedi</span>
+             <span className="bg-white text-blue-700 px-3 py-1 rounded-full font-bold shadow-sm">09h - 19h</span>
           </div>
         </div>
 
-        {/* CORPS DU FORMULAIRE */}
-        <div className="p-8 md:p-10">
+        {/* COLONNE DROITE : LE FORMULAIRE NET (Fond Blanc) */}
+        <div className="md:w-7/12 p-8 md:p-12 bg-white dark:bg-slate-900 flex flex-col justify-center">
+          
           {isSuccess ? (
-            <div className="flex flex-col items-center text-center animate-in fade-in zoom-in py-10">
-              <div className="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center mb-6 shadow-lg shadow-green-500/20">
+            <div className="flex flex-col items-center text-center animate-in fade-in zoom-in">
+              <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6">
                 <CheckCircle className="w-10 h-10" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">C'est envoyé !</h3>
-              <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-xs">
-                Merci. Je reviens vers vous très vite.
+              <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Message envoyé !</h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-8 text-lg">
+                C'est noté. Je reviens vers vous très vite.
               </p>
-              <button onClick={() => setIsSuccess(false)} className="px-6 py-2.5 bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-xl font-bold text-sm hover:opacity-90 transition-opacity">
-                Envoyer un autre message
+              <button onClick={() => setIsSuccess(false)} className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors">
+                Envoyer un autre
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Envoyer un message</h3>
+
               <div className="grid grid-cols-2 gap-5">
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Nom</label>
-                  <input required name="nom" className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" placeholder="Votre nom" />
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase">Nom</label>
+                  <input required name="nom" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Votre nom" />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Téléphone</label>
-                  <input type="tel" name="phone" className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" placeholder="06..." />
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase">Téléphone</label>
+                  <input type="tel" name="phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="06..." />
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Email</label>
-                <input required type="email" name="email" className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" placeholder="votre@email.com" />
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 uppercase">Email</label>
+                <input required type="email" name="email" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="votre@email.com" />
               </div>
 
-              {/* MENU DÉROULANT SÉCURISÉ */}
-              <div className="space-y-1.5 relative">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Sujet</label>
+              {/* MENU DÉROULANT SOLIDE */}
+              <div className="space-y-1 relative">
+                <label className="text-xs font-bold text-slate-500 uppercase">Sujet</label>
                 <button 
                   type="button"
                   onClick={() => setIsSelectOpen(!isSelectOpen)}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-left text-sm flex items-center justify-between focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 text-left text-sm flex items-center justify-between focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 >
                   {selectedOption ? (
-                    <span className="flex items-center gap-2 text-slate-900 dark:text-white">
+                    <span className="flex items-center gap-2 text-slate-800 font-medium">
                       {selectedOption.icon}
                       <span>{selectedOption.label}</span>
                     </span>
@@ -157,12 +186,12 @@ export default function Contact() {
                 </button>
                 
                 {isSelectOpen && (
-                  <div className="absolute z-50 mt-1 w-full bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden animate-in fade-in slide-in-from-top-2">
+                  <div className="absolute z-50 mt-1 w-full bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-1">
                     {sujets.map((s) => (
                       <div 
                         key={s.value}
                         onClick={() => handleCustomSelect(s.value)}
-                        className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer flex items-center gap-3 text-sm text-slate-700 dark:text-slate-200 transition-colors"
+                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center gap-3 text-sm text-slate-700 transition-colors"
                       >
                         {s.icon}
                         <span>{s.label}</span>
@@ -172,52 +201,33 @@ export default function Contact() {
                 )}
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Message</label>
-                <textarea required name="message" rows={4} className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm resize-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 uppercase">Message</label>
+                <textarea required name="message" rows={3} className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-800 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Fichiers (Optionnel)</label>
-                <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-4 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all text-center group"
-                >
-                  <input 
-                    type="file" 
-                    multiple 
-                    ref={fileInputRef}
-                    className="hidden" 
-                    onChange={handleFileChange} 
-                    accept=".jpg,.jpeg,.png,.pdf" 
-                    name="file" 
-                  />
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-full group-hover:scale-110 transition-transform">
-                      <Paperclip className="w-5 h-5 text-blue-500" />
-                    </div>
-                    {fileNames.length > 0 ? (
-                      <div className="text-left w-full space-y-1">
-                        {fileNames.map((name, i) => (
-                          <div key={i} className="flex items-center gap-2 text-xs text-blue-600 bg-white dark:bg-slate-800 px-2 py-1 rounded border border-blue-100 dark:border-slate-700 shadow-sm">
-                            <FileText className="w-3 h-3 shrink-0" />
-                            <span className="truncate">{name}</span>
-                          </div>
-                        ))}
-                        <p className="text-[10px] text-center text-slate-400 mt-2">Cliquez pour changer</p>
-                      </div>
-                    ) : (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                        Cliquez ici pour ajouter des fichiers <br/>
-                        <span className="text-[10px] font-normal opacity-70">(Max 5 Mo • JPG, PNG, PDF)</span>
-                      </p>
-                    )}
-                  </div>
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                className="border-2 border-dashed border-slate-200 rounded-lg p-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-all text-center group"
+              >
+                <input type="file" multiple ref={fileInputRef} className="hidden" onChange={handleFileChange} accept=".jpg,.jpeg,.png,.pdf" name="file" />
+                <div className="flex items-center justify-center gap-2">
+                  <Paperclip className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold text-slate-600 group-hover:text-blue-600">
+                    {fileNames.length > 0 ? `${fileNames.length} fichier(s) sélectionné(s)` : "Ajouter des pièces jointes"}
+                  </span>
                 </div>
+                {fileNames.length > 0 && (
+                  <div className="mt-2 flex flex-wrap justify-center gap-2">
+                    {fileNames.map((name, i) => (
+                      <span key={i} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded-md border border-blue-200 truncate max-w-[150px]">{name}</span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {errorMessage && (
-                <div className="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs font-bold rounded-lg text-center">
+                <div className="p-3 bg-red-50 text-red-600 text-xs font-bold rounded-lg text-center border border-red-100">
                   {errorMessage}
                 </div>
               )}
@@ -225,9 +235,9 @@ export default function Contact() {
               <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full h-12 bg-slate-900 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg hover:shadow-blue-500/20 flex items-center justify-center gap-2 text-sm transition-all transform active:scale-[0.98]"
+                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 text-sm transition-all transform active:scale-[0.98] mt-2"
               >
-                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /> Envoyer ma demande</>}
+                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Send className="w-4 h-4" /> Envoyer</>}
               </button>
 
             </form>
