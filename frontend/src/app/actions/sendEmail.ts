@@ -6,6 +6,13 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (payload: any) => {
   
+  // SÉCURITÉ ANTI-ROBOT (Honeypot)
+  // Si le champ caché '_honey' est rempli, c'est un robot. On bloque tout.
+  if (payload._honey) {
+    console.log("Tentative de spam bloquée.");
+    return { success: true }; // On fait croire au robot que ça a marché
+  }
+
   const email = payload.email;
   const message = payload.message;
   const nom = payload.nom || "Non renseigné";
@@ -34,6 +41,7 @@ export const sendEmail = async (payload: any) => {
           <div style="background: #f4f4f4; padding: 15px; border-radius: 5px;">
             ${message.replace(/\n/g, '<br>')}
           </div>
+          ${payload.fileName ? `<p style="font-size: 12px; color: #666; margin-top: 20px;">📎 Pièces jointes indiquées : ${payload.fileName}</p>` : ''}
         </div>
       `,
     });
@@ -41,9 +49,6 @@ export const sendEmail = async (payload: any) => {
     return { success: true, data };
 
   } catch (error: any) {
-    console.error("Erreur d'envoi:", error);
-    return {
-      error: error.message || "Une erreur est survenue lors de l'envoi.",
-    };
+    return { error: error.message || "Erreur d'envoi" };
   }
 };

@@ -30,9 +30,34 @@ export default function Contact() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+    
     if (files && files.length > 0) {
-      const names = Array.from(files).map(f => f.name);
+      // 1. Vérification du nombre (Max 3)
+      if (files.length > 3) {
+        alert("Maximum 3 fichiers autorisés.");
+        e.target.value = ""; // Reset
+        setFileNames([]);
+        return;
+      }
+
+      // 2. Vérification de la taille (Max 5Mo total)
+      let totalSize = 0;
+      const names = [];
+      for (let i = 0; i < files.length; i++) {
+        totalSize += files[i].size;
+        names.push(files[i].name);
+      }
+
+      if (totalSize > 5 * 1024 * 1024) { // 5 Mo
+        alert("Les fichiers sont trop lourds (Max 5 Mo au total).");
+        e.target.value = ""; // Reset
+        setFileNames([]);
+        return;
+      }
+
       setFileNames(names);
+    } else {
+      setFileNames([]);
     }
   };
 
@@ -58,14 +83,15 @@ export default function Contact() {
       phone: formData.get('phone'),
       sujet: sujet,
       message: formData.get('message'),
-      fileName: fileNames.join(', ') 
+      fileName: fileNames.join(', '),
+      _honey: formData.get('_honey') // Champ piège pour les robots
     };
 
     try {
       const result = await sendEmail(payload);
       if (result.success || result.data) setIsSuccess(true);
       else setErrorMessage(typeof result.error === 'string' ? result.error : 'Une erreur est survenue.');
-    } catch (error: any) {
+    } catch (error) {
       setErrorMessage("Erreur de connexion.");
     } finally {
       setIsSubmitting(false);
@@ -75,12 +101,11 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-4 font-sans">
       
-      {/* CADRE PRINCIPAL : SPLIT SCREEN (Gauche Couleur / Droite Blanc) */}
+      {/* CADRE PRINCIPAL */}
       <div className="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
         
-        {/* COLONNE GAUCHE : LE VISUEL FORT (Bleu Solide) */}
+        {/* GAUCHE : INFOS */}
         <div className="md:w-5/12 bg-blue-600 text-white p-10 flex flex-col justify-between relative">
-          {/* Cercle déco subtil */}
           <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -ml-16 -mt-16 pointer-events-none"></div>
           
           <div className="relative z-10">
@@ -130,7 +155,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* COLONNE DROITE : LE FORMULAIRE NET (Fond Blanc) */}
+        {/* DROITE : FORMULAIRE SÉCURISÉ */}
         <div className="md:w-7/12 p-8 md:p-12 bg-white dark:bg-slate-900 flex flex-col justify-center">
           
           {isSuccess ? (
@@ -150,23 +175,25 @@ export default function Contact() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Envoyer un message</h3>
 
+              {/* CHAMP POT DE MIEL (HONEYPOT) INVISIBLE */}
+              <input type="text" name="_honey" className="hidden" style={{ display: 'none' }} autoComplete="off" />
+
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-500 uppercase">Nom</label>
-                  <input required name="nom" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="Votre nom" />
+                  <input required name="nom" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="Votre nom" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-500 uppercase">Téléphone</label>
-                  <input type="tel" name="phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="06..." />
+                  <input type="tel" name="phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="06..." />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500 uppercase">Email</label>
-                <input required type="email" name="email" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="votre@email.com" />
+                <input required type="email" name="email" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="votre@email.com" />
               </div>
 
-              {/* MENU DÉROULANT SOLIDE */}
               <div className="space-y-1 relative">
                 <label className="text-xs font-bold text-slate-500 uppercase">Sujet</label>
                 <button 
@@ -203,7 +230,7 @@ export default function Contact() {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500 uppercase">Message</label>
-                <textarea required name="message" rows={3} className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
+                <textarea required name="message" rows={3} className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-800 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
               </div>
 
               <div 
@@ -217,12 +244,18 @@ export default function Contact() {
                     {fileNames.length > 0 ? `${fileNames.length} fichier(s) sélectionné(s)` : "Ajouter des pièces jointes"}
                   </span>
                 </div>
-                {fileNames.length > 0 && (
+                
+                {/* LISTE DES FICHIERS */}
+                {fileNames.length > 0 ? (
                   <div className="mt-2 flex flex-wrap justify-center gap-2">
                     {fileNames.map((name, i) => (
                       <span key={i} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded-md border border-blue-200 truncate max-w-[150px]">{name}</span>
                     ))}
                   </div>
+                ) : (
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Max 3 fichiers • 5 Mo • JPG, PNG, PDF
+                  </p>
                 )}
               </div>
 
