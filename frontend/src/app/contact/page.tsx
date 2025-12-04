@@ -8,12 +8,23 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [fileName, setFileName] = useState('');
+  const [fileNames, setFileNames] = useState<string[]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) setFileName(file.name);
-    else setFileName('');
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      // On récupère les noms de tous les fichiers
+      const names = Array.from(files).map(f => f.name);
+      setFileNames(names);
+    } else {
+      setFileNames([]);
+    }
+  };
+
+  const clearFiles = () => {
+    setFileNames([]);
+    // Note: Pour vider l'input file réellement, il faudrait une référence, 
+    // mais pour l'affichage visuel cette méthode suffit pour l'instant.
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -28,7 +39,8 @@ export default function Contact() {
       phone: formData.get('phone'),
       sujet: formData.get('sujet'),
       message: formData.get('message'),
-      fileName: fileName 
+      // On envoie la liste des fichiers sous forme de texte
+      fileName: fileNames.join(', ') 
     };
 
     try {
@@ -43,158 +55,171 @@ export default function Contact() {
   };
 
   return (
-    // FOND AVEC "VIE" (Dégradés subtils en arrière-plan)
-    <div className="min-h-screen relative bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 md:p-8 overflow-hidden">
+    <div className="min-h-screen relative bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 overflow-hidden font-sans">
       
-      {/* Formes d'ambiance (Blobs) */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-500/20 rounded-full blur-3xl opacity-50 animate-blob"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-500/20 rounded-full blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-[20%] right-[20%] w-72 h-72 bg-pink-500/10 rounded-full blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+      {/* FOND ANIMÉ SUBTIL */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-[100px] opacity-40 animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-400/20 rounded-full blur-[100px] opacity-40 animate-pulse animation-delay-2000"></div>
       </div>
 
-      {/* CARTE PRINCIPALE */}
-      <div className="relative z-10 w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl flex flex-col lg:flex-row overflow-visible border border-white/20">
+      {/* CARTE PRINCIPALE (Plus compacte: max-w-4xl) */}
+      <div className="relative z-10 w-full max-w-4xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden border border-white/40 dark:border-white/10 ring-1 ring-black/5">
         
-        {/* COLONNE GAUCHE : VISUEL VIBRANT */}
-        <div className="lg:w-5/12 bg-gradient-to-br from-blue-700 via-blue-600 to-purple-700 text-white p-10 flex flex-col justify-between relative rounded-t-3xl lg:rounded-l-3xl lg:rounded-tr-none overflow-hidden">
-          {/* Motif de fond */}
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        {/* COLONNE GAUCHE : IDENTITÉ VISUELLE */}
+        <div className="md:w-5/12 bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-8 flex flex-col justify-between relative overflow-hidden">
+          {/* Motif discret */}
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/20 to-transparent"></div>
           
           <div className="relative z-10">
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-6 flex items-center gap-2">
-              Smile PC <Sparkles className="w-6 h-6 text-yellow-300" />
+            <h2 className="text-2xl md:text-3xl font-extrabold mb-4 flex items-center gap-2 tracking-tight">
+              Smile PC <Sparkles className="w-5 h-5 text-yellow-300" />
             </h2>
-            <p className="text-blue-100 text-lg mb-10 leading-relaxed">
-              Une urgence ? Un projet ?<br/>
-              Je vous réponds avec le sourire.
+            <p className="text-blue-100 text-sm mb-8 leading-relaxed font-medium opacity-90">
+              Expertise technique & bonne humeur.<br/>
+              Intervention rapide à domicile.
             </p>
             
-            <div className="space-y-6">
-              <div className="flex items-center gap-4 group">
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-colors">
-                  <Phone className="w-6 h-6 text-white" />
+            <div className="space-y-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center border border-white/10 shrink-0">
+                  <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-blue-200 uppercase tracking-wider">Appelez-moi</p>
-                  <a href="tel:+33600000000" className="text-lg font-bold hover:text-white transition-colors">06 00 00 00 00</a>
+                  <p className="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Appelez-moi</p>
+                  <a href="tel:+33600000000" className="text-base font-bold hover:text-blue-200 transition-colors">06 00 00 00 00</a>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 group">
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-colors">
-                  <Mail className="w-6 h-6 text-white" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center border border-white/10 shrink-0">
+                  <Mail className="w-5 h-5" />
                 </div>
-                <div className="overflow-hidden">
-                  <p className="text-xs font-bold text-blue-200 uppercase tracking-wider">Écrivez-moi</p>
-                  <a href="mailto:contact@smilepcsolutions.fr" className="text-lg font-bold hover:text-white transition-colors truncate block">contact@smilepcsolutions.fr</a>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Écrivez-moi</p>
+                  <a href="mailto:contact@smilepcsolutions.fr" className="text-base font-bold hover:text-blue-200 transition-colors truncate block">contact@smilepcsolutions.fr</a>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 group">
-                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-colors">
-                  <MapPin className="w-6 h-6 text-white" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center border border-white/10 shrink-0">
+                  <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-blue-200 uppercase tracking-wider">Zone</p>
-                  <p className="text-lg font-bold">Moyeuvre-Grande</p>
+                  <p className="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Zone</p>
+                  <p className="text-base font-bold">Moyeuvre-Grande</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Horaires intégrés */}
-          <div className="relative z-10 mt-10 bg-black/20 p-4 rounded-2xl backdrop-blur-md border border-white/5">
-             <div className="flex items-center gap-2 mb-2 text-blue-200">
-               <Clock className="w-4 h-4" /> <span className="text-sm font-bold uppercase">Disponibilités</span>
+          <div className="relative z-10 mt-8 pt-6 border-t border-white/10">
+             <div className="flex items-center gap-2 mb-2 text-blue-100">
+               <Clock className="w-4 h-4" /> <span className="text-xs font-bold uppercase">Horaires</span>
              </div>
-             <div className="text-sm flex justify-between items-center text-white/90">
-               <span>Lundi - Samedi</span>
-               <span className="font-bold bg-white/20 px-2 py-0.5 rounded text-xs">09h - 19h</span>
+             <div className="text-xs flex justify-between items-center text-white/90 font-medium">
+               <span>Lun - Sam</span>
+               <span className="bg-white/20 px-2 py-0.5 rounded">09h - 19h</span>
              </div>
           </div>
         </div>
 
-        {/* COLONNE DROITE : FORMULAIRE PROPRE */}
-        <div className="lg:w-7/12 p-8 md:p-12 bg-white dark:bg-slate-900">
+        {/* COLONNE DROITE : FORMULAIRE ÉPURÉ */}
+        <div className="md:w-7/12 p-8 bg-transparent">
           
           {isSuccess ? (
-            <div className="h-full flex flex-col items-center justify-center text-center animate-in fade-in py-10">
-              <div className="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mb-6 shadow-sm border border-green-100">
-                <CheckCircle className="w-12 h-12" />
+            <div className="h-full flex flex-col items-center justify-center text-center animate-in fade-in py-6">
+              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                <CheckCircle className="w-8 h-8" />
               </div>
-              <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-3">Reçu 5/5 !</h3>
-              <p className="text-slate-600 dark:text-slate-300 mb-8 max-w-sm text-lg">
-                Votre message est bien arrivé. Je regarde ça et je reviens vers vous rapidement.
+              <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Message envoyé !</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-300 mb-6">
+                Merci de votre confiance. Je vous réponds très vite.
               </p>
-              <button onClick={() => setIsSuccess(false)} className="px-8 py-3 bg-slate-900 dark:bg-blue-600 text-white rounded-xl font-bold hover:scale-105 transition-transform">
-                Envoyer un autre
+              <button onClick={() => setIsSuccess(false)} className="px-6 py-2 bg-slate-900 dark:bg-blue-600 text-white rounded-lg font-bold text-sm hover:opacity-90 transition-opacity">
+                Nouveau message
               </button>
             </div>
           ) : (
             <div className="h-full flex flex-col justify-center">
-              <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-8">
+              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6">
                 Envoyer un message
               </h3>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="group">
-                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Nom</label>
-                    <input required className="w-full px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white font-medium focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all" placeholder="Votre nom" name="nom"/>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nom</label>
+                    <input required className="w-full px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Votre nom" name="nom"/>
                   </div>
-                  <div className="group">
-                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Téléphone</label>
-                    <input type="tel" className="w-full px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white font-medium focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all" placeholder="06..." name="phone"/>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Téléphone</label>
+                    <input type="tel" className="w-full px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="06..." name="phone"/>
                   </div>
                 </div>
 
-                <div className="group">
-                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Email</label>
-                  <input required type="email" className="w-full px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white font-medium focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all" placeholder="votre@email.com" name="email"/>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</label>
+                  <input required type="email" className="w-full px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="votre@email.com" name="email"/>
                 </div>
 
-                <div className="group relative">
-                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Sujet</label>
-                  <select name="sujet" className="w-full px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white font-medium focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 outline-none appearance-none cursor-pointer">
-                    <option value="Panne">🛠️ Panne / Réparation</option>
-                    <option value="Devis">📝 Demande de Devis</option>
-                    <option value="Virus">🦠 Virus / Lenteur</option>
-                    <option value="Données">�� Récup. Données (Disque/USB)</option>
-                    <option value="Autre">❓ Autre demande</option>
-                  </select>
-                  <div className="absolute right-4 top-[3.2rem] pointer-events-none text-slate-400">▼</div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sujet</label>
+                  <div className="relative">
+                    <select name="sujet" className="w-full px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer">
+                      <option value="Panne">🛠️ Panne / Réparation</option>
+                      <option value="Devis">📝 Demande de Devis</option>
+                      <option value="Virus">🦠 Virus / Lenteur</option>
+                      <option value="Données">💾 Récup. Données</option>
+                      <option value="Autre">❓ Autre demande</option>
+                    </select>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">▼</div>
+                  </div>
                 </div>
 
-                <div className="group">
-                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">Message</label>
-                  <textarea required name="message" rows={4} className="w-full px-4 py-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white font-medium resize-none focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all" placeholder="Dites-moi tout..."></textarea>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Message</label>
+                  <textarea required name="message" rows={3} className="w-full px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm resize-none focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Votre message..."></textarea>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
-                   <label className="cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors w-full sm:w-auto justify-center border-2 border-transparent hover:border-blue-200">
-                      <Paperclip className="w-4 h-4" /> Joindre un fichier
-                      <input type="file" className="hidden" onChange={handleFileChange} accept=".jpg,.jpeg,.png,.pdf" name="file" />
-                   </label>
+                {/* ZONE FICHIERS MULTIPLES */}
+                <div className="pt-1">
+                   <div className="flex items-center gap-3">
+                     <label className="cursor-pointer bg-slate-100 dark:bg-slate-700/50 hover:bg-blue-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2 transition-colors border border-transparent hover:border-blue-200 shadow-sm">
+                        <Paperclip className="w-3.5 h-3.5" /> Joindre des fichiers
+                        <input type="file" multiple className="hidden" onChange={handleFileChange} accept=".jpg,.jpeg,.png,.pdf" name="file" />
+                     </label>
+                     <span className="text-[10px] text-slate-400 italic">Max 5 Mo</span>
+                   </div>
                    
-                   {fileName && (
-                      <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded-lg border border-blue-100 w-full sm:w-auto">
-                        <FileText className="w-4 h-4 shrink-0" />
-                        <span className="truncate">{fileName}</span>
-                        <button type="button" onClick={() => setFileName('')} className="ml-auto hover:text-red-500"><X className="w-4 h-4"/></button>
+                   {/* LISTE VERTICALE DES FICHIERS */}
+                   {fileNames.length > 0 && (
+                      <div className="mt-3 space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
+                        {fileNames.map((name, index) => (
+                          <div key={index} className="flex items-center justify-between text-xs text-blue-700 bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-md border border-blue-100 dark:border-blue-800 animate-in slide-in-from-left-2">
+                            <div className="flex items-center gap-2 overflow-hidden">
+                              <FileText className="w-3.5 h-3.5 shrink-0" />
+                              <span className="truncate">{name}</span>
+                            </div>
+                            {/* Le bouton croix vide juste la liste pour l'instant pour simplifier l'UX */}
+                            <button type="button" onClick={clearFiles} className="text-slate-400 hover:text-red-500 ml-2" title="Tout effacer">
+                              <X className="w-3.5 h-3.5"/>
+                            </button>
+                          </div>
+                        ))}
                       </div>
                    )}
-
-                   <button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-blue-500/30 flex items-center justify-center gap-2 text-base transition-all transform hover:-translate-y-0.5"
-                  >
-                    {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Send className="w-5 h-5" /> Envoyer</>}
-                  </button>
                 </div>
 
-                {errorMessage && <p className="text-red-500 text-sm font-bold bg-red-50 p-3 rounded-lg">{errorMessage}</p>}
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-blue-500/30 flex items-center justify-center gap-2 text-sm transition-all transform hover:-translate-y-0.5 mt-2"
+                >
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /> Envoyer</>}
+                </button>
+                
+                {errorMessage && <p className="text-red-500 text-xs font-bold text-center mt-2">{errorMessage}</p>}
               </form>
             </div>
           )}
