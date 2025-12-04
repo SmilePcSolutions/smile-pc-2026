@@ -1,13 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { sendEmail } from '../actions/sendEmail'; // Connexion au serveur
-import { MapPin, Phone, Mail, Clock, Send, Upload, Loader2, CheckCircle } from 'lucide-react';
+import { sendEmail } from '../actions/sendEmail';
+import { MapPin, Phone, Mail, Clock, Send, Paperclip, CheckCircle, Loader2, FileText, X } from 'lucide-react';
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [fileName, setFileName] = useState('');
+
+  // Gestion de l'affichage du fichier sélectionné
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
+    } else {
+      setFileName('');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,13 +27,15 @@ export default function Contact() {
 
     const formData = new FormData(e.currentTarget);
     
-    // Conversion des données pour notre action serveur
     const payload = {
       nom: formData.get('nom'),
       email: formData.get('email'),
       phone: formData.get('phone'),
       sujet: formData.get('sujet'),
       message: formData.get('message'),
+      // Note: L'envoi réel du fichier binaire nécessiterait une conversion Base64
+      // Pour l'instant on envoie le nom du fichier pour indiquer qu'il y a une PJ
+      fileName: fileName 
     };
 
     try {
@@ -33,176 +46,159 @@ export default function Contact() {
         setErrorMessage(typeof result.error === 'string' ? result.error : 'Une erreur est survenue.');
       }
     } catch (error) {
-      setErrorMessage("Erreur de connexion. Réessayez.");
+      setErrorMessage("Erreur de connexion.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="w-full py-12 bg-slate-50 dark:bg-slate-950 min-h-screen transition-colors duration-500">
-      <div className="container mx-auto px-4 md:px-6">
+    <div className="w-full py-8 bg-slate-50 dark:bg-slate-950 min-h-screen transition-colors duration-500 flex items-center justify-center">
+      <div className="container mx-auto px-4 max-w-5xl">
         
-        {/* EN-TÊTE */}
-        <div className="text-center mb-12 max-w-2xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
+        {/* EN-TÊTE COMPACT */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">
             Contactez-moi
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400 font-medium">
-            Une question ? Un dépannage ? Je vous réponds dans la journée.
+          <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+            Réponse rapide assurée sur Moyeuvre-Grande et alentours.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-12 gap-6 items-start">
           
-          {/* COLONNE GAUCHE : INFOS */}
-          <div className="flex flex-col gap-6">
+          {/* COLONNE GAUCHE (4/12) : INFOS */}
+          <div className="lg:col-span-4 flex flex-col gap-4">
             {/* Carte Coordonnées */}
-            <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-sm">
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Informations</h3>
-              <div className="space-y-6">
-                <div className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                    <Phone className="w-6 h-6" />
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Mes Coordonnées</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center shrink-0">
+                    <Phone className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider">Téléphone</p>
-                    <a href="tel:+33600000000" className="text-lg font-semibold text-slate-900 dark:text-white hover:text-blue-600 transition-colors">06 00 00 00 00</a>
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Téléphone</p>
+                    <a href="tel:+33600000000" className="text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600">06 00 00 00 00</a>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                    <Mail className="w-6 h-6" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center shrink-0">
+                    <Mail className="w-4 h-4" />
                   </div>
-                  <div>
-                    <p className="font-bold text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</p>
-                    <a href="mailto:contact@smilepcsolutions.fr" className="text-lg font-semibold text-slate-900 dark:text-white hover:text-blue-600 transition-colors">contact@smilepcsolutions.fr</a>
+                  <div className="overflow-hidden">
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Email</p>
+                    <a href="mailto:contact@smilepcsolutions.fr" className="text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600 truncate block">contact@smilepcsolutions.fr</a>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-                    <MapPin className="w-6 h-6" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center shrink-0">
+                    <MapPin className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider">Zone d'intervention</p>
-                    <p className="text-lg font-semibold text-slate-900 dark:text-white">Moyeuvre-Grande et alentours</p>
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Zone</p>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">Moyeuvre-Grande</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Carte Horaires */}
-            <div className="bg-slate-900 dark:bg-blue-950 p-8 rounded-3xl shadow-2xl text-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -mr-16 -mt-16 transition-all duration-700 group-hover:bg-blue-400/30"></div>
-              
-              <div className="flex items-center gap-3 mb-6 relative z-10">
-                <Clock className="w-7 h-7 text-blue-400" />
-                <h3 className="text-2xl font-bold">Horaires</h3>
+            {/* Carte Horaires Compacte */}
+            <div className="bg-slate-900 dark:bg-blue-950 p-5 rounded-2xl shadow-lg text-white">
+              <div className="flex items-center gap-2 mb-3">
+                <Clock className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg font-bold">Horaires</h3>
               </div>
-              
-              <ul className="space-y-4 relative z-10 text-slate-300">
-                <li className="flex justify-between items-center border-b border-slate-700/50 pb-2">
-                  <span>Lun - Ven</span>
-                  <span className="font-bold text-white bg-slate-800 px-3 py-1 rounded-full text-sm">09h - 19h</span>
-                </li>
-                <li className="flex justify-between items-center border-b border-slate-700/50 pb-2">
-                  <span>Samedi</span>
-                  <span className="font-bold text-white bg-slate-800 px-3 py-1 rounded-full text-sm">09h - 18h</span>
-                </li>
-                <li className="flex justify-between items-center pt-2">
-                  <span>Dimanche</span>
-                  <span className="text-blue-200 font-bold bg-blue-900/50 px-3 py-1 rounded-full text-sm border border-blue-700/50">Urgences</span>
-                </li>
+              <ul className="space-y-2 text-xs text-slate-300">
+                <li className="flex justify-between border-b border-slate-700/50 pb-1"><span>Lun - Ven</span><span className="text-white font-bold">09h - 19h</span></li>
+                <li className="flex justify-between border-b border-slate-700/50 pb-1"><span>Samedi</span><span className="text-white font-bold">09h - 18h</span></li>
+                <li className="flex justify-between pt-1"><span>Dimanche</span><span className="text-blue-300 font-bold">Urgences</span></li>
               </ul>
             </div>
           </div>
 
-          {/* COLONNE DROITE : FORMULAIRE */}
-          <div className="bg-white dark:bg-slate-900 p-8 md:p-10 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden">
+          {/* COLONNE DROITE (8/12) : FORMULAIRE */}
+          <div className="lg:col-span-8 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
             
             {isSuccess ? (
-              // VUE SUCCÈS
-              <div className="h-full flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500 py-10">
-                <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6">
-                  <CheckCircle className="w-10 h-10" />
+              <div className="h-64 flex flex-col items-center justify-center text-center animate-in fade-in py-6">
+                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle className="w-8 h-8" />
                 </div>
-                <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Message envoyé !</h3>
-                <p className="text-slate-600 dark:text-slate-300 max-w-xs mx-auto mb-8">
-                  Merci de m'avoir contacté. Je vous répondrai sur votre adresse email très rapidement.
-                </p>
-                <button 
-                  onClick={() => setIsSuccess(false)}
-                  className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 rounded-full font-medium transition-colors"
-                >
-                  Envoyer un autre message
-                </button>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Message envoyé !</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">Je vous réponds très vite.</p>
+                <button onClick={() => setIsSuccess(false)} className="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 rounded-lg text-sm font-medium">Nouveau message</button>
               </div>
             ) : (
-              // VUE FORMULAIRE
-              <>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Envoyer un message</h3>
-                
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid md:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Nom</label>
-                      <input required className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Votre nom" name="nom"/>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Téléphone</label>
-                      <input type="tel" className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" placeholder="06..." name="phone"/>
-                    </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">NOM</label>
+                    <input required className="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:ring-1 focus:ring-blue-500 outline-none" placeholder="Votre nom" name="nom"/>
                   </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Email</label>
-                    <input required type="email" className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" placeholder="email@exemple.com" name="email"/>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">TÉLÉPHONE</label>
+                    <input type="tel" className="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:ring-1 focus:ring-blue-500 outline-none" placeholder="06..." name="phone"/>
                   </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Objet</label>
-                    <div className="relative">
-                      <select name="sujet" className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none appearance-none cursor-pointer text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all">
-                        <option value="Devis">📝 Demande de Devis</option>
-                        <option value="Panne">🛠️ Panne / Réparation</option>
-                        <option value="Virus">🦠 Virus / Lenteur</option>
-                        <option value="Données">💾 Récupération Données</option>
-                        <option value="Cours">🎓 Cours Informatique</option>
-                        <option value="Autre">❓ Autre demande</option>
-                      </select>
-                    </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">EMAIL</label>
+                    <input required type="email" className="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:ring-1 focus:ring-blue-500 outline-none" placeholder="votre@email.com" name="email"/>
                   </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Message</label>
-                    <textarea required name="message" rows={4} className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none text-slate-900 dark:text-white resize-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Expliquez-moi votre problème..."></textarea>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">SUJET</label>
+                    <select name="sujet" className="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:ring-1 focus:ring-blue-500 outline-none cursor-pointer">
+                      <option value="Panne">🛠️ Panne / Réparation</option>
+                      <option value="Devis">📝 Demande de Devis</option>
+                      <option value="Virus">🦠 Virus / Lenteur</option>
+                      <option value="Données">💾 Récupération Données</option>
+                      <option value="Autre">❓ Autre demande</option>
+                    </select>
                   </div>
+                </div>
 
-                  {errorMessage && (
-                    <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm border border-red-200">
-                      {errorMessage}
-                    </div>
-                  )}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">MESSAGE</label>
+                  <textarea required name="message" rows={3} className="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm resize-none focus:ring-1 focus:ring-blue-500 outline-none" placeholder="Comment puis-je vous aider ?"></textarea>
+                </div>
 
-                  <button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2 text-base disabled:opacity-70 disabled:cursor-not-allowed transition-all transform active:scale-[0.98]"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" /> Envoi en cours...
-                      </>
+                {/* ZONE PIÈCE JOINTE AMÉLIORÉE */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">PIÈCE JOINTE (Optionnel)</label>
+                  <div className="flex items-center gap-3">
+                    <label className="cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors border border-slate-200 dark:border-slate-700">
+                      <Paperclip className="w-4 h-4" />
+                      Parcourir...
+                      <input type="file" className="hidden" onChange={handleFileChange} accept=".jpg,.jpeg,.png,.pdf" name="file" />
+                    </label>
+                    
+                    {fileName ? (
+                      <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-md border border-blue-100 dark:border-blue-800">
+                        <FileText className="w-4 h-4" />
+                        <span className="truncate max-w-[200px]">{fileName}</span>
+                        <button type="button" onClick={() => setFileName('')} className="ml-1 hover:text-red-500"><X className="w-3 h-3"/></button>
+                      </div>
                     ) : (
-                      <>
-                        Envoyer le message <Send className="w-5 h-5" />
-                      </>
+                      <span className="text-xs text-slate-400 italic">Aucun fichier choisi</span>
                     )}
-                  </button>
-                </form>
-              </>
+                  </div>
+                </div>
+
+                {errorMessage && <p className="text-red-500 text-xs">{errorMessage}</p>}
+
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-2 text-sm disabled:opacity-70 transition-all mt-2"
+                >
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /> Envoyer</>}
+                </button>
+              </form>
             )}
           </div>
         </div>
