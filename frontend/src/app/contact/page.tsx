@@ -1,5 +1,7 @@
 'use client';
 
+// Mise à jour forcée : 2025-12-04 14:41:24
+
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { sendEmail } from '../actions/sendEmail';
 import { Phone, Mail, MapPin, Send, Paperclip, CheckCircle, Loader2, FileText, X, ChevronDown, Wrench, ShieldAlert, HardDrive, GraduationCap, FileQuestion } from 'lucide-react';
@@ -27,7 +29,7 @@ export default function Contact() {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      if (files.length > 3) { alert("Maximum 3 fichiers."); return; }
+      if (files.length > 3) { alert("Max 3 fichiers."); return; }
       const names = Array.from(files).map(f => f.name);
       setFileNames(names);
     }
@@ -58,44 +60,35 @@ export default function Contact() {
     try {
       const result = await sendEmail(payload);
       if (result.success || result.data) setIsSuccess(true);
-      else setErrorMessage('Erreur serveur.');
+      else setErrorMessage(typeof result.error === 'string' ? result.error : 'Erreur inconnue');
     } catch {
-      setErrorMessage("Erreur connexion.");
+      setErrorMessage("Erreur de connexion serveur.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    // FOND GRIS CLAIR FIXE (Pas de scroll global)
     <div className="fixed inset-0 w-full h-full bg-slate-100 flex items-center justify-center p-4 font-sans text-slate-800">
-      
-      {/* CARTE CENTRALE BLANCHE (Ombrée) */}
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden max-h-[90vh]">
         
-        {/* GAUCHE : INFOS (Bleu Roi) */}
+        {/* GAUCHE : INFOS */}
         <div className="md:w-5/12 bg-blue-700 text-white p-8 md:p-10 flex flex-col justify-between relative">
           <div className="relative z-10">
             <h2 className="text-3xl font-extrabold mb-8">Contactez-moi</h2>
-            
             <div className="space-y-8">
-              {/* TÉLÉPHONE (Bien Gros) */}
               <div>
                 <p className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Téléphone</p>
                 <a href="tel:0600000000" className="flex items-center gap-3 text-2xl font-bold hover:text-blue-200 transition-colors">
                   <Phone className="w-6 h-6" /> 06 00 00 00 00
                 </a>
               </div>
-
-              {/* EMAIL (Entier et Cliquable) */}
               <div>
                 <p className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Email</p>
                 <a href="mailto:contact@smilepcsolutions.fr" className="flex items-center gap-3 text-lg font-bold hover:text-blue-200 transition-colors break-all">
                   <Mail className="w-6 h-6 flex-shrink-0" /> contact@smilepcsolutions.fr
                 </a>
               </div>
-
-              {/* ZONE */}
               <div>
                 <p className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Zone d'intervention</p>
                 <div className="flex items-center gap-3 text-lg font-bold">
@@ -104,14 +97,13 @@ export default function Contact() {
               </div>
             </div>
           </div>
-
           <div className="relative z-10 pt-6 border-t border-white/20 mt-auto flex justify-between items-center">
             <span className="text-sm font-medium text-blue-100">Lundi - Samedi</span>
             <span className="bg-white/20 px-3 py-1 rounded-full text-sm font-bold">09h - 19h</span>
           </div>
         </div>
 
-        {/* DROITE : FORMULAIRE (Blanc & Scrollable SI besoin) */}
+        {/* DROITE : FORMULAIRE */}
         <div className="md:w-7/12 p-8 md:p-10 bg-white overflow-y-auto">
           {isSuccess ? (
             <div className="h-full flex flex-col items-center justify-center text-center animate-in zoom-in">
@@ -120,16 +112,13 @@ export default function Contact() {
               </div>
               <h3 className="text-2xl font-bold text-slate-800 mb-2">Message envoyé !</h3>
               <p className="text-slate-500 mb-6">Je vous réponds très vite.</p>
-              <button onClick={() => setIsSuccess(false)} className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">
-                Nouveau message
-              </button>
+              <button onClick={() => setIsSuccess(false)} className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">Nouveau message</button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="mb-4">
                 <h3 className="text-2xl font-bold text-slate-800">Envoyer un message</h3>
               </div>
-
               <input type="text" name="_honey" className="hidden" style={{display:'none'}} autoComplete="off" />
               
               <div className="grid grid-cols-2 gap-4">
@@ -148,7 +137,6 @@ export default function Contact() {
                 <input required type="email" name="email" className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-300 focus:border-blue-500 outline-none text-slate-900" placeholder="votre@email.com" />
               </div>
 
-              {/* MENU SUJET QUI FLOTTE AU DESSUS (Z-INDEX CORRIGÉ) */}
               <div className="space-y-1 relative z-50">
                 <label className="text-xs font-bold text-slate-500 uppercase">Sujet</label>
                 <button type="button" onClick={() => setIsSelectOpen(!isSelectOpen)} className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-left flex items-center justify-between focus:border-blue-500 outline-none text-slate-900">
@@ -176,7 +164,7 @@ export default function Contact() {
                 <div className="flex items-center justify-center gap-2">
                   <Paperclip className="w-4 h-4 text-blue-500" />
                   <span className="text-sm font-bold text-slate-600 group-hover:text-blue-700">
-                    {fileNames.length > 0 ? `${fileNames.length} fichiers` : "Ajouter des pièces jointes"}
+                    {fileNames.length > 0 ? ${fileNames.length} fichiers : "Ajouter des pièces jointes"}
                   </span>
                 </div>
                 {fileNames.length > 0 && <div className="mt-2 flex flex-wrap justify-center gap-2">{fileNames.map((n, i) => <span key={i} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium truncate max-w-[120px]">{n}</span>)}</div>}
