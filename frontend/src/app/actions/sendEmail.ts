@@ -24,7 +24,7 @@ export const sendEmail = async (payload: any) => {
     // 3. Envoi via Resend
     const data = await resend.emails.send({
       from: 'Contact Form <onboarding@resend.dev>',
-      to: 'smilepcsolutions@gmail.com', // Ton adresse de réception
+      to: 'misterjojo057@gmail.com',, // Ton adresse de réception
       subject: `[Smile PC] ${sujet} - De ${nom}`,
       replyTo: email as string,
       html: `
