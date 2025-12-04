@@ -54,7 +54,7 @@ export default function Contact() {
       nom: formData.get('nom'),
       email: formData.get('email'),
       phone: formData.get('phone'),
-      sujet: sujet, // On utilise notre état personnalisé
+      sujet: sujet,
       message: formData.get('message'),
       fileName: fileNames.join(', ') 
     };
@@ -73,21 +73,20 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 md:p-6 font-sans relative overflow-hidden">
       
-      {/* FOND D'AMBIANCE HAUT DE GAMME */}
+      {/* FOND D'AMBIANCE */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] animate-pulse"></div>
         <div className="absolute bottom-[-10%] right-[20%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] animate-pulse animation-delay-2000"></div>
       </div>
 
-      {/* CONTENEUR CENTRAL : L'ÉLÉGANCE PURE */}
-      <div className="relative z-10 w-full max-w-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] border border-white/50 dark:border-white/5 flex flex-col overflow-hidden">
+      {/* CONTENEUR CENTRAL */}
+      <div className="relative z-10 w-full max-w-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] border border-white/50 dark:border-white/5 flex flex-col overflow-visible">
         
-        {/* EN-TÊTE INTÉGRÉ */}
+        {/* EN-TÊTE */}
         <div className="text-center pt-10 pb-6 px-8 border-b border-slate-100 dark:border-slate-800/50">
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">Contactez-moi</h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm">Réponse rapide assurée sur Moyeuvre-Grande.</p>
           
-          {/* BARRE D'INFOS RAPIDE */}
           <div className="flex flex-wrap justify-center gap-4 mt-6 text-xs font-medium text-slate-600 dark:text-slate-300">
             <a href="tel:+33600000000" className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-colors">
               <Phone className="w-3.5 h-3.5 text-blue-500" /> 06 00 00 00 00
@@ -135,7 +134,7 @@ export default function Contact() {
                 <input required type="email" name="email" className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" placeholder="votre@email.com" />
               </div>
 
-              {/* MENU DÉROULANT SUR-MESURE (Custom Select) */}
+              {/* MENU DÉROULANT SUR-MESURE */}
               <div className="space-y-1.5 relative">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Sujet</label>
                 <button 
@@ -151,10 +150,9 @@ export default function Contact() {
                       </>
                     ) : "Choisir un sujet..."}
                   </span>
-                  <ChevronDown className={w-4 h-4 text-slate-400 transition-transform } />
+                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isSelectOpen ? 'rotate-180' : ''}`} />
                 </button>
                 
-                {/* La liste déroulante personnalisée */}
                 {isSelectOpen && (
                   <div className="absolute z-50 mt-1 w-full bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden animate-in fade-in slide-in-from-top-2">
                     {sujets.map((s) => (
@@ -176,7 +174,7 @@ export default function Contact() {
                 <textarea required name="message" rows={4} className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm resize-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
               </div>
 
-              {/* DROPZONE FICHIERS (Zone de glisser-déposer stylée) */}
+              {/* DROPZONE FICHIERS */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Fichiers (Optionnel)</label>
                 <div 
