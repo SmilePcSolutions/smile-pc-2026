@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { sendEmail } from '../actions/sendEmail';
 import { Phone, Mail, MapPin, Send, Paperclip, CheckCircle, Loader2, FileText, X, ChevronDown, Wrench, ShieldAlert, HardDrive, GraduationCap, FileQuestion } from 'lucide-react';
 
@@ -8,8 +8,8 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [fileNames, setFileNames] = useState([]);
-  const fileInputRef = useRef(null);
+  const [fileNames, setFileNames] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [sujet, setSujet] = useState('');
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   
@@ -24,7 +24,8 @@ export default function Contact() {
 
   const selectedOption = sujets.find(s => s.value === sujet);
 
-  const handleFileChange = (e) => {
+  // Correction ici : Ajout du type ChangeEvent<HTMLInputElement>
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       if (files.length > 3) { alert("Max 3 fichiers."); return; }
@@ -33,12 +34,13 @@ export default function Contact() {
     }
   };
 
-  const handleCustomSelect = (value) => {
+  const handleCustomSelect = (value: string) => {
     setSujet(value);
     setIsSelectOpen(false);
   };
 
-  const handleSubmit = async (e) => {
+  // Correction ici : Ajout du type FormEvent<HTMLFormElement>
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!sujet) { setErrorMessage("Sélectionnez un sujet"); return; }
     setIsSubmitting(true);
@@ -67,20 +69,19 @@ export default function Contact() {
   };
 
   return (
-    // CONTENEUR PRINCIPAL : HAUTEUR FIXE (h-screen) + NO SCROLL (overflow-hidden)
     <div className="h-screen w-full relative bg-slate-950 flex items-center justify-center overflow-hidden font-sans">
       
-      {/* --- ARRIÈRE-PLAN ANIMÉ (La Vie) --- */}
+      {/* ARRIÈRE-PLAN ANIMÉ */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/30 rounded-full blur-[100px] animate-pulse"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/30 rounded-full blur-[100px] animate-pulse animation-delay-2000"></div>
         <div className="absolute top-[40%] left-[40%] w-[30vw] h-[30vw] bg-indigo-500/20 rounded-full blur-[80px] animate-bounce duration-[10s]"></div>
       </div>
 
-      {/* --- CARTE EN VERRE (Centrée Parfaitement) --- */}
+      {/* CARTE EN VERRE */}
       <div className="relative z-10 w-full max-w-5xl mx-4 md:mx-auto bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl flex flex-col md:flex-row overflow-hidden max-h-[90vh]">
         
-        {/* PARTIE GAUCHE : INFOS (Transparente) */}
+        {/* GAUCHE : INFOS */}
         <div className="md:w-4/12 p-8 md:p-10 flex flex-col justify-between bg-black/20 border-b md:border-b-0 md:border-r border-white/5">
           <div>
             <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">Contact</h2>
@@ -128,7 +129,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* PARTIE DROITE : FORMULAIRE (Clean) */}
+        {/* DROITE : FORMULAIRE */}
         <div className="md:w-8/12 p-8 md:p-10 bg-white/80 dark:bg-slate-900/80 overflow-y-auto">
           {isSuccess ? (
             <div className="h-full flex flex-col items-center justify-center text-center animate-in zoom-in duration-300">
@@ -143,7 +144,7 @@ export default function Contact() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input type="text" name="_honey" className="hidden" />
+              <input type="text" name="_honey" className="hidden" style={{ display: 'none' }} autoComplete="off" />
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
