@@ -1,11 +1,11 @@
 'use server';
+// Correction appliquee a 15:56:03
 
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (payload: any) => {
-  // Honeypot anti-spam check
   if (payload._honey) return { success: true };
 
   const email = payload.email;
@@ -22,33 +22,29 @@ export const sendEmail = async (payload: any) => {
     const data = await resend.emails.send({
       from: 'Contact Form <onboarding@resend.dev>',
       to: 'misterjojo057@gmail.com',
-      subject: `[Smile PC] ${sujet} - De ${nom}`,
+      subject: [Smile PC]  - De ,
       replyTo: email as string,
-      html: `
-        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+      html: 
+        <div style="font-family: Arial, sans-serif; color: #333;">
           <h2 style="color: #2563EB;">Nouveau Message Smile PC</h2>
-          <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <p><strong>De :</strong> ${nom}</p>
-            <p><strong>Email :</strong> ${email}</p>
-            <p><strong>Tél :</strong> ${phone}</p>
-            <p><strong>Sujet :</strong> ${sujet}</p>
+          <div style="background: #f4f4f4; padding: 20px; border-radius: 8px;">
+            <p><strong>De :</strong> </p>
+            <p><strong>Email :</strong> </p>
+            <p><strong>Tél :</strong> </p>
+            <p><strong>Sujet :</strong> </p>
           </div>
-          <div style="border-left: 4px solid #2563EB; padding-left: 15px;">
-            <h3>Message :</h3>
-            <p style="white-space: pre-wrap;">${message}</p>
-          </div>
-          <hr style="margin-top: 30px; border: 0; border-top: 1px solid #eee;" />
-          <p style="font-size: 12px; color: #666;">
-            <strong>Fichiers joints (Noms) :</strong><br/>
-            ${payload.fileName || 'Aucun fichier'}
-          </p>
+          <br/>
+          <p style="white-space: pre-wrap;"></p>
+          <hr/>
+          <p style="font-size: 12px; color: #666;">Fichiers : </p>
         </div>
-      `,
+      ,
     });
 
     return { success: true, data };
   } catch (error: any) {
-    console.error("Resend Error:", error);
-    return { error: "Erreur technique lors de l'envoi." };
+    console.error(error);
+    // Message d'erreur plus clair pour le diagnostic
+    return { error: "Erreur technique (" + error.message + ")" };
   }
 };
