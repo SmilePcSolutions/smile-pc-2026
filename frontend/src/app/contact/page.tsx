@@ -1,5 +1,4 @@
 'use client';
-// Version Finale 15:56:03
 
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { sendEmail } from '../actions/sendEmail';
@@ -69,10 +68,6 @@ export default function Contact() {
       const result = await sendEmail(payload);
       if (result.success || result.data) {
         setIsSuccess(true);
-        // On vide le formulaire uniquement SI c'est un succès
-        if (formRef.current) formRef.current.reset();
-        setFileNames([]);
-        setSujet('');
       } else {
         setErrorMessage(typeof result.error === 'string' ? result.error : 'Erreur serveur.');
       }
@@ -92,6 +87,7 @@ export default function Contact() {
         <div className="md:w-5/12 bg-blue-700 text-white p-10 flex flex-col justify-between relative overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-3xl font-extrabold mb-10">Contactez-moi</h2>
+            
             <div className="space-y-8">
               <div className="group">
                 <p className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Téléphone</p>
@@ -99,12 +95,14 @@ export default function Contact() {
                   <Phone className="w-8 h-8" /> 06 00 00 00 00
                 </a>
               </div>
+
               <div className="group">
                 <p className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Email</p>
                 <a href="mailto:contact@smilepcsolutions.fr" className="flex items-center gap-3 text-xl font-bold hover:text-blue-200 transition-colors break-all">
                   <Mail className="w-6 h-6 flex-shrink-0" /> contact@smilepcsolutions.fr
                 </a>
               </div>
+
               <div>
                 <p className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Zone d'intervention</p>
                 <div className="flex items-center gap-3 text-xl font-bold">
@@ -113,6 +111,7 @@ export default function Contact() {
               </div>
             </div>
           </div>
+
           <div className="relative z-10 pt-6 border-t border-white/20 mt-auto flex justify-between items-center">
             <span className="text-sm font-medium text-blue-100">Du Lundi au Samedi</span>
             <span className="bg-white text-blue-800 px-3 py-1 rounded-full text-sm font-bold">09h - 19h</span>
@@ -128,16 +127,18 @@ export default function Contact() {
               </div>
               <h3 className="text-3xl font-bold text-slate-800 mb-2">Message envoyé !</h3>
               <p className="text-slate-500 mb-8 text-lg">Je vous réponds très rapidement.</p>
-              <button onClick={() => setIsSuccess(false)} className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-transform hover:scale-105">
+              <button onClick={resetForm} className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-transform hover:scale-105">
                 Envoyer un autre message
               </button>
             </div>
           ) : (
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 h-full flex flex-col justify-center">
+              
               <div className="mb-2">
                 <h3 className="text-2xl font-bold text-slate-800">Envoyer un message</h3>
                 <p className="text-slate-500">Remplissez le formulaire ci-dessous.</p>
               </div>
+
               <input type="text" name="_honey" className="hidden" style={{display:'none'}} autoComplete="off" />
               
               <div className="grid grid-cols-2 gap-6">
@@ -183,7 +184,7 @@ export default function Contact() {
                 <div className="flex items-center justify-center gap-2">
                   <Paperclip className="w-5 h-5 text-blue-500 group-hover:scale-110 transition-transform" />
                   <span className="text-sm font-bold text-slate-600 group-hover:text-blue-700">
-                    {fileNames.length > 0 ? ${fileNames.length} fichiers ajoutés : "Ajouter des pièces jointes"}
+                    {fileNames.length > 0 ? `${fileNames.length} fichiers ajoutés` : "Ajouter des pièces jointes"}
                   </span>
                 </div>
                 {fileNames.length > 0 && <div className="mt-3 flex flex-wrap justify-center gap-2">{fileNames.map((n, i) => <span key={i} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium truncate max-w-[150px]">{n}</span>)}</div>}
