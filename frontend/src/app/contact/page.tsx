@@ -10,8 +10,8 @@ export default function Contact() {
   const [errorMessage, setErrorMessage] = useState('');
   
   // Gestion Fichiers
-  const [fileNames, setFileNames] = useState([]);
-  const fileInputRef = useRef(null);
+  const [fileNames, setFileNames] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Gestion Menu Sujet
   const [sujet, setSujet] = useState('');
@@ -28,7 +28,7 @@ export default function Contact() {
 
   const selectedOption = sujets.find(s => s.value === sujet);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const names = Array.from(files).map(f => f.name);
@@ -36,12 +36,12 @@ export default function Contact() {
     }
   };
 
-  const handleCustomSelect = (value) => {
+  const handleCustomSelect = (value: string) => {
     setSujet(value);
     setIsSelectOpen(false);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!sujet) {
       setErrorMessage("Merci de sélectionner un sujet.");
@@ -65,7 +65,7 @@ export default function Contact() {
       const result = await sendEmail(payload);
       if (result.success || result.data) setIsSuccess(true);
       else setErrorMessage(typeof result.error === 'string' ? result.error : 'Une erreur est survenue.');
-    } catch (error) {
+    } catch (error: any) {
       setErrorMessage("Erreur de connexion.");
     } finally {
       setIsSubmitting(false);
@@ -87,7 +87,7 @@ export default function Contact() {
             <h2 className="text-3xl font-extrabold mb-6 tracking-tight">Contactez-moi</h2>
             <p className="text-blue-100 text-lg mb-12 font-medium">
               Une question technique ?<br/>
-              Besoin d'un devis ?<br/>
+              Besoin d&apos;un devis ?<br/>
               Je vous réponds rapidement.
             </p>
             
@@ -140,7 +140,7 @@ export default function Contact() {
               </div>
               <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Message envoyé !</h3>
               <p className="text-slate-500 dark:text-slate-400 mb-8 text-lg">
-                C'est noté. Je reviens vers vous très vite.
+                C&apos;est noté. Je reviens vers vous très vite.
               </p>
               <button onClick={() => setIsSuccess(false)} className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors">
                 Envoyer un autre
@@ -153,17 +153,17 @@ export default function Contact() {
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-500 uppercase">Nom</label>
-                  <input required name="nom" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Votre nom" />
+                  <input required name="nom" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="Votre nom" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-500 uppercase">Téléphone</label>
-                  <input type="tel" name="phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="06..." />
+                  <input type="tel" name="phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="06..." />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500 uppercase">Email</label>
-                <input required type="email" name="email" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="votre@email.com" />
+                <input required type="email" name="email" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="votre@email.com" />
               </div>
 
               {/* MENU DÉROULANT SOLIDE */}
@@ -172,10 +172,10 @@ export default function Contact() {
                 <button 
                   type="button"
                   onClick={() => setIsSelectOpen(!isSelectOpen)}
-                  className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 text-left text-sm flex items-center justify-between focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-left text-sm flex items-center justify-between focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                 >
                   {selectedOption ? (
-                    <span className="flex items-center gap-2 text-slate-800 font-medium">
+                    <span className="flex items-center gap-2 text-slate-800 dark:text-white font-medium">
                       {selectedOption.icon}
                       <span>{selectedOption.label}</span>
                     </span>
@@ -186,12 +186,12 @@ export default function Contact() {
                 </button>
                 
                 {isSelectOpen && (
-                  <div className="absolute z-50 mt-1 w-full bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-1">
+                  <div className="absolute z-50 mt-1 w-full bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden animate-in fade-in slide-in-from-top-1">
                     {sujets.map((s) => (
                       <div 
                         key={s.value}
                         onClick={() => handleCustomSelect(s.value)}
-                        className="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center gap-3 text-sm text-slate-700 transition-colors"
+                        className="px-4 py-3 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer flex items-center gap-3 text-sm text-slate-700 dark:text-slate-200 transition-colors"
                       >
                         {s.icon}
                         <span>{s.label}</span>
@@ -203,17 +203,17 @@ export default function Contact() {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500 uppercase">Message</label>
-                <textarea required name="message" rows={3} className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-800 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
+                <textarea required name="message" rows={3} className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
               </div>
 
               <div 
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-slate-200 rounded-lg p-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-all text-center group"
+                className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-all text-center group"
               >
                 <input type="file" multiple ref={fileInputRef} className="hidden" onChange={handleFileChange} accept=".jpg,.jpeg,.png,.pdf" name="file" />
                 <div className="flex items-center justify-center gap-2">
                   <Paperclip className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold text-slate-600 group-hover:text-blue-600">
+                  <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-blue-600">
                     {fileNames.length > 0 ? `${fileNames.length} fichier(s) sélectionné(s)` : "Ajouter des pièces jointes"}
                   </span>
                 </div>
