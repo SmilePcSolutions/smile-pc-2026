@@ -5,7 +5,6 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (payload: any) => {
-  // Sécurité robot
   if (payload._honey) return { success: true };
 
   const email = payload.email;
@@ -15,7 +14,7 @@ export const sendEmail = async (payload: any) => {
   const sujet = payload.sujet || "Contact Site";
 
   if (!email || !message) {
-    return { error: 'Email et message requis.' };
+    return { error: "Email et message obligatoires" };
   }
 
   try {
@@ -24,28 +23,23 @@ export const sendEmail = async (payload: any) => {
       to: 'misterjojo057@gmail.com',
       subject: `[Smile PC] ${sujet} - De ${nom}`,
       replyTo: email as string,
-      // C'est ici que ça plantait : je remets les backticks correctement
       html: `
-        <div style="font-family: Arial, sans-serif; color: #333;">
-          <h2 style="color: #2563EB;">Nouveau Message Smile PC</h2>
-          <div style="background: #f4f4f4; padding: 15px; border-radius: 8px;">
-            <p><strong>De :</strong> ${nom}</p>
-            <p><strong>Email :</strong> ${email}</p>
-            <p><strong>Tél :</strong> ${phone}</p>
-            <p><strong>Sujet :</strong> ${sujet}</p>
-          </div>
-          <br/>
-          <h3>Message :</h3>
-          <p style="font-size: 16px; white-space: pre-wrap;">${message}</p>
-          <hr/>
-          <p style="font-size: 12px; color: #666;">Fichiers joints indiqués : ${payload.fileName || 'Aucun'}</p>
+        <div style="font-family: sans-serif; color: #333;">
+          <h2 style="color: #2563EB;">Nouveau Message</h2>
+          <p><strong>De :</strong> ${nom} (<a href="mailto:${email}">${email}</a>)</p>
+          <p><strong>Tél :</strong> ${phone}</p>
+          <p><strong>Sujet :</strong> ${sujet}</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+          <p style="font-size: 16px; line-height: 1.5;">${message.replace(/\n/g, '<br>')}</p>
+          <p style="color: #666; font-size: 12px; margin-top: 30px;">
+            Fichiers joints indiqués : ${payload.fileName || 'Aucun'}
+          </p>
         </div>
       `,
     });
-
     return { success: true, data };
   } catch (error: any) {
-    console.error(error);
-    return { error: "Erreur lors de l'envoi." };
+    console.error("Erreur Resend:", error);
+    return { error: "Erreur technique lors de l'envoi." };
   }
 };
