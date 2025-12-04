@@ -2,7 +2,7 @@
 
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { sendEmail } from '../actions/sendEmail';
-import { Phone, Mail, MapPin, Send, Paperclip, CheckCircle, Loader2, FileText, X, ChevronDown, Wrench, ShieldAlert, HardDrive, GraduationCap, FileQuestion } from 'lucide-react';
+import { Phone, Mail, MapPin, Send, Paperclip, CheckCircle, Loader2, FileText, ChevronDown, Wrench, ShieldAlert, HardDrive, GraduationCap, FileQuestion } from 'lucide-react';
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,7 +68,6 @@ export default function Contact() {
       const result = await sendEmail(payload);
       if (result.success || result.data) {
         setIsSuccess(true);
-        // On ne reset pas tout de suite pour laisser l'utilisateur voir le message de succès
       } else {
         setErrorMessage(typeof result.error === 'string' ? result.error : 'Erreur serveur.');
       }
@@ -84,7 +83,7 @@ export default function Contact() {
       
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl flex flex-col md:flex-row overflow-hidden max-h-[90vh] border border-slate-100">
         
-        {/* GAUCHE : INFOS (Bleu Pro) */}
+        {/* LEFT COLUMN: INFO (Professional Blue) */}
         <div className="md:w-5/12 bg-blue-700 text-white p-10 flex flex-col justify-between relative overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-3xl font-extrabold mb-10">Contactez-moi</h2>
@@ -119,7 +118,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* DROITE : FORMULAIRE CLAIR */}
+        {/* RIGHT COLUMN: FORM (Clean White) */}
         <div className="md:w-7/12 p-8 md:p-12 bg-white overflow-y-auto">
           {isSuccess ? (
             <div className="h-full flex flex-col items-center justify-center text-center animate-in zoom-in">
