@@ -13,7 +13,7 @@ export default function Contact() {
   const [fileNames, setFileNames] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Gestion Menu Sujet Personnalisé
+  // Gestion Menu Sujet
   const [sujet, setSujet] = useState('');
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   
@@ -21,10 +21,13 @@ export default function Contact() {
     { value: 'Panne', label: 'Panne / Réparation', icon: <Wrench className="w-4 h-4 text-blue-500"/> },
     { value: 'Devis', label: 'Demande de Devis', icon: <FileText className="w-4 h-4 text-green-500"/> },
     { value: 'Virus', label: 'Virus / Lenteur', icon: <ShieldAlert className="w-4 h-4 text-red-500"/> },
-    { value: 'Données', label: 'Récupération de Données (Disque/USB)', icon: <HardDrive className="w-4 h-4 text-purple-500"/> },
+    { value: 'Données', label: 'Récupération Données', icon: <HardDrive className="w-4 h-4 text-purple-500"/> },
     { value: 'Cours', label: 'Cours / Formation', icon: <GraduationCap className="w-4 h-4 text-yellow-500"/> },
     { value: 'Autre', label: 'Autre demande', icon: <FileQuestion className="w-4 h-4 text-slate-500"/> },
   ];
+
+  // Trouve l'option sélectionnée pour l'affichage
+  const selectedOption = sujets.find(s => s.value === sujet);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -63,7 +66,7 @@ export default function Contact() {
       const result = await sendEmail(payload);
       if (result.success || result.data) setIsSuccess(true);
       else setErrorMessage(typeof result.error === 'string' ? result.error : 'Une erreur est survenue.');
-    } catch (error) {
+    } catch (error: any) {
       setErrorMessage("Erreur de connexion.");
     } finally {
       setIsSubmitting(false);
@@ -80,7 +83,7 @@ export default function Contact() {
       </div>
 
       {/* CONTENEUR CENTRAL */}
-      <div className="relative z-10 w-full max-w-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] border border-white/50 dark:border-white/5 flex flex-col overflow-visible">
+      <div className="relative z-10 w-full max-w-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/50 dark:border-white/5 flex flex-col overflow-visible">
         
         {/* EN-TÊTE */}
         <div className="text-center pt-10 pb-6 px-8 border-b border-slate-100 dark:border-slate-800/50">
@@ -134,7 +137,7 @@ export default function Contact() {
                 <input required type="email" name="email" className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" placeholder="votre@email.com" />
               </div>
 
-              {/* MENU DÉROULANT SUR-MESURE */}
+              {/* MENU DÉROULANT SÉCURISÉ */}
               <div className="space-y-1.5 relative">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Sujet</label>
                 <button 
@@ -142,14 +145,14 @@ export default function Contact() {
                   onClick={() => setIsSelectOpen(!isSelectOpen)}
                   className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-left text-sm flex items-center justify-between focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all"
                 >
-                  <span className={sujet ? "text-slate-900 dark:text-white flex items-center gap-2" : "text-slate-400"}>
-                    {sujet ? (
-                      <>
-                        {sujets.find(s => s.value === sujet)?.icon}
-                        {sujets.find(s => s.value === sujet)?.label}
-                      </>
-                    ) : "Choisir un sujet..."}
-                  </span>
+                  {selectedOption ? (
+                    <span className="flex items-center gap-2 text-slate-900 dark:text-white">
+                      {selectedOption.icon}
+                      <span>{selectedOption.label}</span>
+                    </span>
+                  ) : (
+                    <span className="text-slate-400">Choisir un sujet...</span>
+                  )}
                   <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isSelectOpen ? 'rotate-180' : ''}`} />
                 </button>
                 
@@ -174,7 +177,6 @@ export default function Contact() {
                 <textarea required name="message" rows={4} className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm resize-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
               </div>
 
-              {/* DROPZONE FICHIERS */}
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Fichiers (Optionnel)</label>
                 <div 
