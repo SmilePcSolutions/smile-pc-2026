@@ -32,29 +32,26 @@ export default function Contact() {
     const files = e.target.files;
     
     if (files && files.length > 0) {
-      // 1. Vérification du nombre (Max 3)
+      // Vérification max 3 fichiers
       if (files.length > 3) {
         alert("Maximum 3 fichiers autorisés.");
-        e.target.value = ""; // Reset
+        e.target.value = ""; 
         setFileNames([]);
         return;
       }
-
-      // 2. Vérification de la taille (Max 5Mo total)
+      // Vérification poids total 5Mo
       let totalSize = 0;
       const names = [];
       for (let i = 0; i < files.length; i++) {
         totalSize += files[i].size;
         names.push(files[i].name);
       }
-
-      if (totalSize > 5 * 1024 * 1024) { // 5 Mo
+      if (totalSize > 5 * 1024 * 1024) {
         alert("Les fichiers sont trop lourds (Max 5 Mo au total).");
-        e.target.value = ""; // Reset
+        e.target.value = "";
         setFileNames([]);
         return;
       }
-
       setFileNames(names);
     } else {
       setFileNames([]);
@@ -84,7 +81,7 @@ export default function Contact() {
       sujet: sujet,
       message: formData.get('message'),
       fileName: fileNames.join(', '),
-      _honey: formData.get('_honey') // Champ piège pour les robots
+      _honey: formData.get('_honey')
     };
 
     try {
@@ -101,8 +98,8 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-4 font-sans">
       
-      {/* CADRE PRINCIPAL */}
-      <div className="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+      {/* CADRE PRINCIPAL CENTRÉ (mx-auto ajouté pour forcer le centrage) */}
+      <div className="w-full max-w-5xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
         
         {/* GAUCHE : INFOS */}
         <div className="md:w-5/12 bg-blue-600 text-white p-10 flex flex-col justify-between relative">
@@ -155,7 +152,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* DROITE : FORMULAIRE SÉCURISÉ */}
+        {/* DROITE : FORMULAIRE */}
         <div className="md:w-7/12 p-8 md:p-12 bg-white dark:bg-slate-900 flex flex-col justify-center">
           
           {isSuccess ? (
@@ -175,23 +172,22 @@ export default function Contact() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Envoyer un message</h3>
 
-              {/* CHAMP POT DE MIEL (HONEYPOT) INVISIBLE */}
               <input type="text" name="_honey" className="hidden" style={{ display: 'none' }} autoComplete="off" />
 
               <div className="grid grid-cols-2 gap-5">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-500 uppercase">Nom</label>
-                  <input required name="nom" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="Votre nom" />
+                  <input required name="nom" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="Votre nom" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-500 uppercase">Téléphone</label>
-                  <input type="tel" name="phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="06..." />
+                  <input type="tel" name="phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="06..." />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500 uppercase">Email</label>
-                <input required type="email" name="email" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="votre@email.com" />
+                <input required type="email" name="email" className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-900 dark:text-white" placeholder="votre@email.com" />
               </div>
 
               <div className="space-y-1 relative">
@@ -230,32 +226,41 @@ export default function Contact() {
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500 uppercase">Message</label>
-                <textarea required name="message" rows={3} className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-800 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
+                <textarea required name="message" rows={3} className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Je vous écoute..."></textarea>
               </div>
 
+              {/* ZONE FICHIERS AMÉLIORÉE */}
               <div 
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-all text-center group"
+                className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-all text-center group"
               >
                 <input type="file" multiple ref={fileInputRef} className="hidden" onChange={handleFileChange} accept=".jpg,.jpeg,.png,.pdf" name="file" />
-                <div className="flex items-center justify-center gap-2">
-                  <Paperclip className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold text-slate-600 dark:text-slate-400 group-hover:text-blue-600">
-                    {fileNames.length > 0 ? `${fileNames.length} fichier(s) sélectionné(s)` : "Ajouter des pièces jointes"}
-                  </span>
-                </div>
                 
-                {/* LISTE DES FICHIERS */}
-                {fileNames.length > 0 ? (
-                  <div className="mt-2 flex flex-wrap justify-center gap-2">
-                    {fileNames.map((name, i) => (
-                      <span key={i} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded-md border border-blue-200 truncate max-w-[150px]">{name}</span>
-                    ))}
+                {/* ETAT INITIAL (Vide) */}
+                {fileNames.length === 0 && (
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="flex items-center gap-2 text-blue-600 font-bold text-sm">
+                       <Paperclip className="w-4 h-4" /> <span>Ajouter des fichiers</span>
+                    </div>
+                    <p className="text-[10px] text-slate-400">
+                      Max 3 fichiers • 5 Mo • JPG, PNG, PDF
+                    </p>
                   </div>
-                ) : (
-                  <p className="text-[10px] text-slate-400 mt-1">
-                    Max 3 fichiers • 5 Mo • JPG, PNG, PDF
-                  </p>
+                )}
+
+                {/* ETAT REMPLI (Liste des fichiers) */}
+                {fileNames.length > 0 && (
+                  <div className="w-full space-y-2">
+                    <p className="text-xs font-bold text-slate-500 text-left mb-2">Fichiers sélectionnés ({fileNames.length}/3) :</p>
+                    {fileNames.map((name, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs text-blue-700 bg-blue-50 px-3 py-2 rounded-md border border-blue-100 text-left">
+                        <FileText className="w-4 h-4 shrink-0" />
+                        <span className="truncate flex-1">{name}</span>
+                        <CheckCircle className="w-3 h-3 text-green-500" />
+                      </div>
+                    ))}
+                    <p className="text-[10px] text-slate-400 mt-1 italic">Cliquez à nouveau pour changer la sélection</p>
+                  </div>
                 )}
               </div>
 
