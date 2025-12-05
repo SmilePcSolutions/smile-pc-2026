@@ -5,7 +5,7 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (payload: any) => {
-  // Sécurité anti-robot silencieuse
+  // Sécurité anti-robot
   if (payload._honey) return { success: true };
 
   const email = payload.email;
@@ -14,9 +14,8 @@ export const sendEmail = async (payload: any) => {
   const phone = payload.phone || "Non renseigné";
   const sujet = payload.sujet || "Contact Site";
 
-  // Validation stricte
   if (!email || !message) {
-    return { error: 'L\'email et le message sont obligatoires.' };
+    return { error: 'Email et message requis.' };
   }
 
   try {
@@ -25,11 +24,10 @@ export const sendEmail = async (payload: any) => {
       to: 'misterjojo057@gmail.com',
       subject: `[Smile PC] ${sujet} - De ${nom}`,
       replyTo: email as string,
-      // HTML correctement formaté avec backticks
       html: `
-        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+        <div style="font-family: Arial, sans-serif; color: #333;">
           <h2 style="color: #2563EB;">Nouveau Message Smile PC</h2>
-          <div style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <p><strong>De :</strong> ${nom}</p>
             <p><strong>Email :</strong> ${email}</p>
             <p><strong>Tél :</strong> ${phone}</p>
