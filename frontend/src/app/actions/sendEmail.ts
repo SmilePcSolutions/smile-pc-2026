@@ -5,7 +5,7 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (payload: any) => {
-  // Sécurité anti-robot
+  // Sécurité anti-robot (Pot de miel)
   if (payload._honey) return { success: true };
 
   const email = payload.email;
@@ -14,8 +14,9 @@ export const sendEmail = async (payload: any) => {
   const phone = payload.phone || "Non renseigné";
   const sujet = payload.sujet || "Contact Site";
 
+  // Validation
   if (!email || !message) {
-    return { error: 'Email et message requis.' };
+    return { error: "L'email et le message sont obligatoires." };
   }
 
   try {
@@ -25,7 +26,7 @@ export const sendEmail = async (payload: any) => {
       subject: `[Smile PC] ${sujet} - De ${nom}`,
       replyTo: email as string,
       html: `
-        <div style="font-family: Arial, sans-serif; color: #333;">
+        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
           <h2 style="color: #2563EB;">Nouveau Message Smile PC</h2>
           <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <p><strong>De :</strong> ${nom}</p>

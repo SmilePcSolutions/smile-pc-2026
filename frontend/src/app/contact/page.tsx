@@ -28,7 +28,7 @@ export default function Contact() {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      if (files.length > 3) { alert("Max 3 fichiers."); return; }
+      if (files.length > 3) { alert("Maximum 3 fichiers."); return; }
       const names = Array.from(files).map(f => f.name);
       setFileNames(names);
     }
@@ -79,6 +79,7 @@ export default function Contact() {
   };
 
   return (
+    // FOND FIXE BLANC/GRIS (Pas de scroll)
     <div className="fixed inset-0 w-full h-full bg-slate-50 flex items-center justify-center p-4 font-sans text-slate-800">
       
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl flex flex-col md:flex-row overflow-hidden max-h-[90vh] border border-slate-100">
@@ -138,6 +139,7 @@ export default function Contact() {
                 <p className="text-slate-500">Remplissez le formulaire ci-dessous.</p>
               </div>
 
+              {/* Champ anti-robot caché */}
               <input type="text" name="_honey" className="hidden" style={{display:'none'}} autoComplete="off" />
               
               <div className="grid grid-cols-2 gap-6">
