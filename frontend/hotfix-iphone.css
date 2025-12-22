@@ -1,0 +1,32 @@
+/* --- FIX IPHONE 17 PRO MAX, FOLDABLES & UX --- */
+:root {
+  --safe-top: env(safe-area-inset-top, 20px);
+  --safe-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  -webkit-tap-highlight-color: transparent;
+}
+
+header, nav, .navbar {
+  position: fixed !important;
+  top: 0; left: 0; right: 0;
+  z-index: 10000;
+  padding-top: var(--safe-top);
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.nav-hidden { transform: translateY(-100%); }
+
+/* Bulle Chat : Positionnement Safe Area */
+[class*='chat'], [id*='chat'], .whatsapp-button {
+  bottom: calc(15px + var(--safe-bottom)) !important;
+  right: 20px !important;
+  z-index: 2147483647 !important;
+  transition: transform 0.2s ease;
+}
