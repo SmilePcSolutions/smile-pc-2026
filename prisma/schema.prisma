@@ -1,0 +1,46 @@
+// 1. LE MOTEUR (Indispensable)
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 2. LA CONNEXION (Indispensable)
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// --- TES MODÈLES ---
+
+// Modèle pour les Prestations
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       String
+  icon        String
+  category    String
+  createdAt   DateTime @default(now())
+}
+
+// Modèle pour le Contact (MIS À JOUR POUR LE MULTI-FICHIERS)
+model ContactLog {
+  id        String   @id @default(cuid())
+  email     String
+  name      String?
+  phone     String?
+  message   String
+  type      String
+  fileUrls  String[] // 👈 ICI : On met des crochets pour dire "Liste de fichiers"
+  createdAt DateTime @default(now())
+}
+
+// Modèle pour les Avis
+model Review {
+  id        String   @id @default(cuid())
+  author    String
+  rating    Int
+  comment   String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
