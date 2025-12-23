@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -6,24 +6,25 @@ import Header from "@/components/Header";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Smile PC Solutions | Dépannage Informatique à Moyeuvre-Grande",
-  description:
-    "Dépannage, maintenance, optimisation, récupération de données et assistance PC/Mac/Linux à Moyeuvre-Grande et alentours.",
+  title: "Smile PC Solutions | Dépannage Informatique Moyeuvre-Grande",
+  description: "Réparation PC & Assistance Informatique rapide à domicile.",
 };
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
-  themeColor: "#f7f9ff",
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="fr" className="scroll-smooth">
-      <body className={`${inter.className} min-h-screen antialiased text-slate-900`}>
+    <html lang="fr">
+      <body className={inter.className}>
+        {/* Barre verte sans l'icône qui buggait */}
+        <div className="bg-green-50 text-green-800 text-sm py-2 text-center flex justify-center items-center gap-2 font-medium border-b border-green-100">
+          ✅ Dépannage à domicile sur Moyeuvre-Grande et alentours
+        </div>
+
         <Header />
-        <main className="min-h-screen pt-28 pb-14 px-4 max-w-7xl mx-auto">
+        <main>
           {children}
         </main>
       </body>
