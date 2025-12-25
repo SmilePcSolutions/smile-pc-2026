@@ -9,7 +9,7 @@ export default function Hero() {
           
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full font-semibold text-sm mb-8 border border-blue-100">
             <CheckCircle2 size={16} />
-            <span>Dépannage à domicile sur Moyeuvre-Grande et alentours</span>
+            <span>Intervention Rapide & Devis Gratuit</span>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight mb-6">
