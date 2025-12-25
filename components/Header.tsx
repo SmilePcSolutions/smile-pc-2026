@@ -24,7 +24,7 @@ export default function Header() {
       </div>
 
       {/* CAPSULE FLOTTANTE */}
-      <header className="fixed top-12 left-0 right-0 z-50 px-4 transition-all duration-300 pointer-events-none">
+      <header className="absolute md:fixed top-12 left-0 right-0 z-50 px-4 transition-all duration-300 pointer-events-none">
         <nav
           className={`mx-auto max-w-6xl rounded-full px-5 py-2.5 transition-all duration-300 pointer-events-auto border
           ${scrolled
@@ -115,3 +115,4 @@ function MobileLink({ href, children, onClick }: { href: string; children: React
     </Link>
   );
 }
+
