@@ -21,6 +21,7 @@ export default function AvisPage() {
     }
 
     try {
+      // On envoie vers /api/avis
       const res = await fetch('/api/avis', { method: 'POST', body: formData });
       if (!res.ok) throw new Error("Erreur envoi");
       setIsSuccess(true);
@@ -57,7 +58,7 @@ export default function AvisPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* ÉTOILES */}
+            {/* SÉLECTEUR D'ÉTOILES */}
             <div className="flex flex-col items-center gap-4 mb-8">
               <label className="font-bold text-slate-700">Quelle note donnez-vous ?</label>
               <div className="flex gap-2">
@@ -88,7 +89,7 @@ export default function AvisPage() {
                 <input required name="nom" className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="Jean Dupont" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Email (ne sera pas publié)</label>
+                <label className="text-sm font-bold text-slate-700">Email (Optionnel)</label>
                 <input name="email" type="email" className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="jean@email.com" />
               </div>
             </div>
@@ -98,7 +99,7 @@ export default function AvisPage() {
               <textarea required name="message" rows={4} className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="Racontez votre expérience..."></textarea>
             </div>
 
-            {/* PHOTO */}
+            {/* UPLOAD PHOTO */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">Une photo du résultat ? (Optionnel)</label>
               <div 
