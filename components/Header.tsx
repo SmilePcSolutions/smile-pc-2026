@@ -18,7 +18,7 @@ export default function Header() {
 
   return (
     <>
-      {/* BANNIÈRE VERTE FIXE (Z-INDEX INFÉRIEUR AU MENU) */}
+      {/* BANNIÈRE VERTE */}
       <div className="bg-green-50 text-green-800 py-2 text-center text-sm font-medium border-b border-green-100 px-4 relative z-40">
         ✅ Dépannage à domicile sur Moyeuvre-Grande et alentours
       </div>
@@ -26,7 +26,7 @@ export default function Header() {
       {/* CAPSULE FLOTTANTE */}
       <header className="fixed top-12 left-0 right-0 z-50 px-4 transition-all duration-300 pointer-events-none">
         <nav
-          className={`mx-auto max-w-6xl rounded-full px-6 py-3 transition-all duration-300 pointer-events-auto border
+          className={`mx-auto max-w-6xl rounded-full px-5 py-2.5 transition-all duration-300 pointer-events-auto border
           ${scrolled
             ? "bg-white/95 shadow-lg backdrop-blur-md border-slate-200/50"
             : "bg-white/80 backdrop-blur-sm border-white/20"}
@@ -37,26 +37,26 @@ export default function Header() {
             {/* LOGO */}
             <Link href="/" onClick={closeMenu} className="flex items-center gap-2 group">
               <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-full text-white shadow-sm group-hover:scale-110 transition-transform">
-                <Laptop size={20} />
+                <Laptop size={18} />
               </div>
-              <span className="font-bold text-xl text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">Smile PC</span>
+              <span className="font-bold text-lg text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">Smile PC</span>
             </Link>
 
-            {/* MENU ORDI (CENTRÉ) */}
-            <div className="hidden md:flex items-center bg-slate-100/80 rounded-full px-2 py-1 gap-1 border border-slate-200/50">
+            {/* MENU ORDI (TEXTE AGRANDI) */}
+            <div className="hidden md:flex items-center bg-slate-100/80 rounded-full px-3 py-1.5 gap-2 border border-slate-200/50">
               <NavLink href="/" label="Accueil" />
               <NavLink href="/services" label="Services & Tarifs" />
               <NavLink href="/avis" label="Avis Clients" />
               <NavLink href="/apropos" label="À propos" />
             </div>
 
-            {/* BOUTON CONTACT */}
+            {/* BOUTON CONTACT (TAILLE RÉDUITE) */}
             <div className="hidden md:block">
               <Link
                 href="/contact"
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-bold shadow-md transition-all hover:scale-105 hover:shadow-lg"
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full font-bold shadow-md transition-all hover:scale-105 hover:shadow-lg text-sm"
               >
-                <Phone size={18} />
+                <Phone size={16} />
                 Me Contacter
               </Link>
             </div>
@@ -66,7 +66,7 @@ export default function Header() {
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden p-2 rounded-full hover:bg-slate-100 text-slate-600 transition-colors"
             >
-              {isOpen ? <X size={28} /> : <Menu size={28} />}
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
 
@@ -97,7 +97,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-blue-700 hover:bg-white hover:shadow-sm transition-all"
+      className="px-3 py-1.5 rounded-full text-sm font-semibold text-slate-700 hover:text-blue-700 hover:bg-white hover:shadow-sm transition-all"
     >
       {label}
     </Link>
