@@ -3,6 +3,11 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// 🛡️ SÉCURITÉ 1 : Liste des fichiers autorisés (Images et PDF uniquement)
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+// 🛡️ SÉCURITÉ 2 : Taille maximale par fichier (4 Mo)
+const MAX_FILE_SIZE = 4 * 1024 * 1024; 
+
 function formatPhoneNumber(phone: string) {
   if (!phone) return "Non renseigné";
   const cleaned = phone.replace(/\D/g, '');
@@ -23,11 +28,40 @@ export async function POST(request: Request) {
     const message = formData.get('message') as string;
     const files = formData.getAll('files') as File[];
 
+    // 🛡️ VÉRIFICATIONS DE SÉCURITÉ AVANT ENVOI
+
+    // 1. Vérifier que les champs obligatoires ne sont pas vides
+    if (!nom || !prenom || !email || !message) {
+      return NextResponse.json({ error: "Tous les champs obligatoires doivent être remplis." }, { status: 400 });
+    }
+
+    // 2. Analyser chaque fichier pour détecter les menaces
+    for (const file of files) {
+      // Si le client n'a pas mis de fichier (taille 0), on passe
+      if (file.size === 0) continue;
+
+      // Vérification du TYPE (Virus, Exécutables, etc.)
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        return NextResponse.json({ 
+          error: `Le fichier "${file.name}" n'est pas autorisé. Seuls les images (JPG, PNG) et PDF sont acceptés.` 
+        }, { status: 400 });
+      }
+
+      // Vérification de la TAILLE (Bombardement de données)
+      if (file.size > MAX_FILE_SIZE) {
+        return NextResponse.json({ 
+          error: `Le fichier "${file.name}" est trop lourd (Max 4 Mo).` 
+        }, { status: 400 });
+      }
+    }
+
     const attachments = await Promise.all(
-      files.map(async (file) => ({
-        filename: file.name,
-        content: Buffer.from(await file.arrayBuffer()),
-      }))
+      files
+        .filter(f => f.size > 0) // On garde seulement les vrais fichiers
+        .map(async (file) => ({
+          filename: file.name,
+          content: Buffer.from(await file.arrayBuffer()),
+        }))
     );
 
     const nomComplet = `${prenom} ${nom}`;
@@ -52,7 +86,6 @@ export async function POST(request: Request) {
           </div>
 
           <div style="padding: 25px;">
-            
             <div style="margin-bottom: 20px;">
               <p style="margin: 0; font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 700;">Sujet</p>
               <h2 style="margin: 5px 0 0 0; font-size: 18px; color: #111827;">${sujet || "Demande générale"}</h2>
@@ -87,7 +120,6 @@ export async function POST(request: Request) {
             <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 15px; color: #374151; line-height: 1.5; font-size: 15px;">
               ${message.replace(/\n/g, '<br>')}
             </div>
-
           </div>
           
           <div style="background-color: #f9fafb; padding: 12px; text-align: center; font-size: 11px; color: #9ca3af; border-top: 1px solid #e5e7eb;">
