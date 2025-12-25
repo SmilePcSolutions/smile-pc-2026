@@ -111,7 +111,6 @@ export default function AvisPage() {
                 onClick={() => fileInputRef.current?.click()}
                 className="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 hover:border-blue-300 transition-all"
               >
-                {/* L'attribut accept permet de filtrer pour images et vidéos */}
                 <input ref={fileInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleFileChange} />
                 {file ? (
                   <div className="flex items-center gap-2 text-green-600 font-bold">
@@ -141,17 +140,17 @@ export default function AvisPage() {
         )}
       </div>
 
-      {/* SECTION DES AVIS PUBLIÉS (Exemples à remplacer par les vrais avis plus tard) */}
+      {/* 👇 ZONE DES FUTURS AVIS 👇
+         Quand tu auras reçu des vrais avis, tu pourras copier le code HTML ici 
+         pour les afficher. Pour l'instant, c'est caché.
+      
       <div className="mt-20">
         <h2 className="text-2xl font-bold text-center mb-10">Derniers avis clients</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <div className="flex text-yellow-400 mb-3"><Star className="fill-current" size={18} /><Star className="fill-current" size={18} /><Star className="fill-current" size={18} /><Star className="fill-current" size={18} /><Star className="fill-current" size={18} /></div>
-            <p className="text-slate-600 mb-4">"Super intervention ! Mon PC est comme neuf. Rapide et efficace."</p>
-            <div className="font-bold text-slate-900 text-sm">- Sophie M.</div>
-          </div>
+           Ici tu colleras tes futurs avis... 
         </div>
-      </div>
+      </div> 
+      */}
 
     </div>
   );
