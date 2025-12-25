@@ -112,7 +112,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* ✅ LE RETOUR DU MENU DÉROULANT SUJET */}
+            {/* ✅ MENU DÉROULANT SUJET PRÉSENT */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 ml-1">Sujet de la demande <span className="text-red-500">*</span></label>
               <div className="relative">
@@ -180,7 +180,8 @@ export default function ContactPage() {
                         <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center"><Mail size={20}/></div>
                          <div>
                             <p className="text-xs text-slate-400 font-bold uppercase">Email</p>
-                            <p className="font-semibold">contact@smilepc.fr</p>
+                            {/* ✅ ADRESSE EMAIL CORRIGÉE ICI */}
+                            <p className="font-semibold">contact@smilepcsolutions.fr</p>
                         </div>
                     </div>
                 </div>
