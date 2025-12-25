@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
+// On utilise la variable d'environnement configurée sur Vercel
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
@@ -12,7 +13,6 @@ export async function POST(request: Request) {
     const message = formData.get('message') as string;
     const files = formData.getAll('files') as File[];
 
-    // Préparation des pièces jointes pour Resend
     const attachments = await Promise.all(
       files.map(async (file) => ({
         filename: file.name,
@@ -37,7 +37,6 @@ export async function POST(request: Request) {
     });
 
     if (data.error) return NextResponse.json({ error: data.error }, { status: 500 });
-
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
