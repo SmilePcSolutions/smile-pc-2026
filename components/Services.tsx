@@ -27,7 +27,7 @@ export default function Services() {
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {featuredServices.map((s, i) => (
-            <div key={i} className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white/40 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all hover:-translate-y-1 group">
+            <div key={i} className="bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white/40 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all hover:-translate-y-1 group">
               <div className={`w-14 h-14 ${s.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                 <s.icon className="w-7 h-7" />
               </div>
@@ -40,3 +40,4 @@ export default function Services() {
     </section>
   );
 }
+
