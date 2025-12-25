@@ -139,7 +139,7 @@ export default function ContactPage() {
                 className="border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center cursor-pointer hover:bg-slate-50 transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <input type="file" multiple ref={fileInputRef} className="hidden" onChange={handleAddFiles} />
+                <input type="file" multiple accept="image/jpeg,image/png,image/webp,application/pdf" ref={fileInputRef} className="hidden" onChange={handleAddFiles} />
                 <Plus className="mx-auto mb-2 text-blue-600" />
                 <p className="text-sm text-slate-600">Ajouter des documents / photos ({files.length})</p>
               </div>
