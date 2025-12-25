@@ -3,7 +3,6 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Fonction de nettoyage du numéro
 function formatPhoneNumber(phone: string) {
   if (!phone) return "Non renseigné";
   const cleaned = phone.replace(/\D/g, '');
@@ -34,7 +33,6 @@ export async function POST(request: Request) {
     const nomComplet = `${prenom} ${nom}`;
     const mailSubject = sujet ? `[${sujet}] Demande de ${nomComplet}` : `Nouveau contact de ${nomComplet}`;
     
-    // Variables pour les liens
     const displayPhone = formatPhoneNumber(telephone);
     const linkPhone = telephone.replace(/\D/g, '');
 
@@ -45,55 +43,54 @@ export async function POST(request: Request) {
         <meta charset="utf-8">
         <title>Nouvelle demande de contact</title>
       </head>
-      <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f5; margin: 0; padding: 20px;">
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f5; margin: 0; padding: 20px;">
         
-        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;">
           
-          <div style="background-color: #2563eb; padding: 24px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">Smile PC Solutions</h1>
-            <p style="color: #bfdbfe; margin: 5px 0 0 0; font-size: 14px;">Nouvelle demande d'intervention</p>
+          <div style="background-color: #2563eb; padding: 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 600;">Smile PC Solutions</h1>
           </div>
 
-          <div style="padding: 32px;">
+          <div style="padding: 25px;">
             
-            <div style="margin-bottom: 25px;">
-              <span style="background-color: #eff6ff; color: #2563eb; padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Sujet</span>
-              <h2 style="margin: 10px 0 0 0; font-size: 20px; color: #1e293b;">${sujet || "Demande générale"}</h2>
+            <div style="margin-bottom: 20px;">
+              <p style="margin: 0; font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 700;">Sujet</p>
+              <h2 style="margin: 5px 0 0 0; font-size: 18px; color: #111827;">${sujet || "Demande générale"}</h2>
             </div>
 
-            <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 25px 0;">
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
 
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
-                <td style="padding-bottom: 15px; color: #64748b; font-size: 14px; width: 30%;">Client</td>
-                <td style="padding-bottom: 15px; color: #0f172a; font-weight: 600; font-size: 16px;">${nomComplet}</td>
+                <td style="padding-bottom: 12px; color: #6b7280; font-size: 14px; width: 30%;">Client</td>
+                <td style="padding-bottom: 12px; color: #111827; font-weight: 500; font-size: 15px;">${nomComplet}</td>
               </tr>
               <tr>
-                <td style="padding-bottom: 15px; color: #64748b; font-size: 14px;">Email</td>
-                <td style="padding-bottom: 15px;">
-                  <a href="mailto:${email}" style="color: #2563eb; text-decoration: none; font-weight: 500;">${email}</a>
+                <td style="padding-bottom: 12px; color: #6b7280; font-size: 14px;">Email</td>
+                <td style="padding-bottom: 12px;">
+                  <a href="mailto:${email}" style="color: #2563eb; text-decoration: none; font-size: 15px;">${email}</a>
                 </td>
               </tr>
               <tr>
-                <td style="padding-bottom: 15px; color: #64748b; font-size: 14px; vertical-align: middle;">Téléphone</td>
-                <td style="padding-bottom: 15px; vertical-align: middle;">
-                  <a href="tel:${linkPhone}" style="color: #2563eb; text-decoration: none; font-weight: 700; font-size: 18px; background-color: #eff6ff; padding: 8px 16px; border-radius: 99px; border: 1px solid #bfdbfe; display: inline-block;">
-                    📞 ${displayPhone}
+                <td style="padding-bottom: 12px; color: #6b7280; font-size: 14px;">Téléphone</td>
+                <td style="padding-bottom: 12px;">
+                  <a href="tel:${linkPhone}" style="color: #111827; text-decoration: none; font-weight: 500; font-size: 15px;">
+                    ${displayPhone}
                   </a>
                 </td>
               </tr>
             </table>
 
-            <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 25px 0;">
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
 
-            <p style="font-size: 12px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Message</p>
-            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; color: #334155; line-height: 1.6; font-size: 15px;">
+            <p style="margin: 0 0 10px 0; font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 700;">Message</p>
+            <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 15px; color: #374151; line-height: 1.5; font-size: 15px;">
               ${message.replace(/\n/g, '<br>')}
             </div>
 
           </div>
-
-          <div style="background-color: #f8fafc; padding: 15px; text-align: center; font-size: 12px; color: #cbd5e1;">
+          
+          <div style="background-color: #f9fafb; padding: 12px; text-align: center; font-size: 11px; color: #9ca3af; border-top: 1px solid #e5e7eb;">
             Smile PC Solutions • Formulaire Web
           </div>
 
@@ -105,7 +102,7 @@ export async function POST(request: Request) {
     const data = await resend.emails.send({
       from: 'Smile PC Solutions <contact@smilepcsolutions.fr>',
       to: ['misterjojo057@gmail.com'],
-      reply_to: email, 
+      reply_to: email,
       subject: mailSubject,
       attachments: attachments,
       html: emailHtml,
