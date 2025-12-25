@@ -74,7 +74,7 @@ export async function POST(request: Request) {
               <tr>
                 <td style="padding-bottom: 12px; color: #6b7280; font-size: 14px;">Téléphone</td>
                 <td style="padding-bottom: 12px;">
-                  <a href="tel:${linkPhone}" style="color: #111827; text-decoration: none; font-weight: 500; font-size: 15px;">
+                  <a href="tel:${linkPhone}" style="color: #2563eb; text-decoration: none; font-weight: 600; font-size: 16px;">
                     ${displayPhone}
                   </a>
                 </td>
