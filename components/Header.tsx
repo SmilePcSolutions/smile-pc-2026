@@ -23,7 +23,7 @@ export default function Header() {
         ✅ Dépannage à domicile sur Moyeuvre-Grande et alentours
       </div>
 
-      {/* CAPSULE FLOTTANTE */}
+      {/* CAPSULE FLOTTANTE HYBRIDE (Absolute sur Mobile / Fixed sur PC) */}
       <header className="absolute md:fixed top-12 left-0 right-0 z-50 px-4 transition-all duration-300 pointer-events-none">
         <nav
           className={`mx-auto max-w-6xl rounded-full px-5 py-2.5 transition-all duration-300 pointer-events-auto border
@@ -42,7 +42,7 @@ export default function Header() {
               <span className="font-bold text-lg text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">Smile PC</span>
             </Link>
 
-            {/* MENU ORDI (TEXTE AGRANDI) */}
+            {/* MENU ORDI (Centré & Lisible) */}
             <div className="hidden md:flex items-center bg-slate-100/80 rounded-full px-3 py-1.5 gap-2 border border-slate-200/50">
               <NavLink href="/" label="Accueil" />
               <NavLink href="/services" label="Services & Tarifs" />
@@ -50,7 +50,7 @@ export default function Header() {
               <NavLink href="/apropos" label="À propos" />
             </div>
 
-            {/* BOUTON CONTACT (TAILLE RÉDUITE) */}
+            {/* BOUTON CONTACT (Affiné) */}
             <div className="hidden md:block">
               <Link
                 href="/contact"
@@ -115,4 +115,3 @@ function MobileLink({ href, children, onClick }: { href: string; children: React
     </Link>
   );
 }
-

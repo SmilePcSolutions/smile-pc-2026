@@ -23,7 +23,7 @@ const featuredServices = [
 
 export default function Services() {
   return (
-    <section id="services" className="relative -mt-32 pb-20 px-6 z-20">
+    <section id="services" className="relative -mt-32 pb-20 px-6 z-30">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {featuredServices.map((s, i) => (
@@ -40,4 +40,3 @@ export default function Services() {
     </section>
   );
 }
-
