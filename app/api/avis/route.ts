@@ -3,9 +3,15 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// SÉCURITÉ : Photos uniquement (JPG, PNG, WebP) et max 4 Mo
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_FILE_SIZE = 4 * 1024 * 1024; 
+// SÉCURITÉ : Images ET Vidéos autorisées
+// Ajout de video/mp4 (Android/Web) et video/quicktime (iPhone .mov) et webm
+const ALLOWED_TYPES = [
+  'image/jpeg', 'image/png', 'image/webp', 
+  'video/mp4', 'video/quicktime', 'video/webm'
+];
+
+// Limite Vercel (environ 4.5 Mo max pour le corps de la requête)
+const MAX_FILE_SIZE = 4.5 * 1024 * 1024; 
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +22,7 @@ export async function POST(request: Request) {
     const message = formData.get('message') as string;
     const files = formData.getAll('files') as File[];
 
-    // 1. Vérification que les champs sont remplis
+    // 1. Vérification que les champs obligatoires sont remplis
     if (!nom || !note || !message) {
       return NextResponse.json({ error: "Merci de remplir la note et le message." }, { status: 400 });
     }
@@ -24,11 +30,13 @@ export async function POST(request: Request) {
     // 2. Vérification de sécurité des fichiers
     for (const file of files) {
       if (file.size > 0) {
+        // Vérification du TYPE
         if (!ALLOWED_TYPES.includes(file.type)) {
-          return NextResponse.json({ error: "Seules les images (JPG, PNG) sont acceptées." }, { status: 400 });
+          return NextResponse.json({ error: "Format non supporté. Envoyez une image ou une vidéo (MP4/MOV)." }, { status: 400 });
         }
+        // Vérification de la TAILLE
         if (file.size > MAX_FILE_SIZE) {
-          return NextResponse.json({ error: "La photo est trop lourde (Max 4 Mo)." }, { status: 400 });
+          return NextResponse.json({ error: `Le fichier est trop lourd (${(file.size / 1024 / 1024).toFixed(1)} Mo). Limite : 4.5 Mo.` }, { status: 400 });
         }
       }
     }
@@ -63,7 +71,7 @@ export async function POST(request: Request) {
           </blockquote>
           
           <p style="font-size: 12px; color: #666; margin-top: 20px;">
-            Vérifiez la photo en pièce jointe (si présente) avant de publier cet avis sur le site.
+            Pièce jointe (Photo ou Vidéo) incluse dans ce mail si le client en a ajouté une.
           </p>
         </div>
       </body>

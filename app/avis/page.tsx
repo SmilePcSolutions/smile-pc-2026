@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { Star, Upload, CheckCircle, Loader2, Send } from "lucide-react";
+import { Star, Upload, CheckCircle, Loader2, Send, Video } from "lucide-react";
 
 export default function AvisPage() {
   const [rating, setRating] = useState(5);
@@ -21,15 +21,17 @@ export default function AvisPage() {
     }
 
     try {
-      // On envoie vers /api/avis
       const res = await fetch('/api/avis', { method: 'POST', body: formData });
-      if (!res.ok) throw new Error("Erreur envoi");
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || "Erreur envoi");
+      
       setIsSuccess(true);
       setFile(null);
       e.target.reset();
       setRating(5);
-    } catch (err) {
-      alert("Erreur lors de l'envoi de l'avis.");
+    } catch (err: any) {
+      alert("Oups : " + err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -41,12 +43,14 @@ export default function AvisPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
+      
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-slate-900 mb-4">Votre avis compte ! ⭐</h1>
         <p className="text-slate-600">Aidez-nous à nous améliorer et partagez votre expérience.</p>
       </div>
 
       <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-slate-100">
+        
         {isSuccess ? (
           <div className="text-center py-12">
             <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -58,6 +62,7 @@ export default function AvisPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-8">
+            
             {/* SÉLECTEUR D'ÉTOILES */}
             <div className="flex flex-col items-center gap-4 mb-8">
               <label className="font-bold text-slate-700">Quelle note donnez-vous ?</label>
@@ -85,11 +90,11 @@ export default function AvisPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Votre Nom</label>
-                <input required name="nom" className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="Jean Dupont" />
+                <label className="text-sm font-bold text-slate-700">Prénom ou Pseudo</label>
+                <input required name="nom" className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="Ex: Jojo du 57" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Email (Optionnel)</label>
+                <label className="text-sm font-bold text-slate-700">Email (Reste privé • Non affiché)</label>
                 <input name="email" type="email" className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="jean@email.com" />
               </div>
             </div>
@@ -99,14 +104,15 @@ export default function AvisPage() {
               <textarea required name="message" rows={4} className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="Racontez votre expérience..."></textarea>
             </div>
 
-            {/* UPLOAD PHOTO */}
+            {/* UPLOAD PHOTO / VIDÉO */}
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Une photo du résultat ? (Optionnel)</label>
+              <label className="text-sm font-bold text-slate-700">Une photo ou vidéo du résultat ? (Optionnel)</label>
               <div 
                 onClick={() => fileInputRef.current?.click()}
                 className="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 hover:border-blue-300 transition-all"
               >
-                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                {/* L'attribut accept permet de filtrer pour images et vidéos */}
+                <input ref={fileInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleFileChange} />
                 {file ? (
                   <div className="flex items-center gap-2 text-green-600 font-bold">
                     <CheckCircle size={20} />
@@ -114,8 +120,11 @@ export default function AvisPage() {
                   </div>
                 ) : (
                   <>
-                    <Upload className="text-slate-400 mb-2" />
-                    <span className="text-sm text-slate-500">Cliquez pour ajouter une image</span>
+                    <div className="flex gap-2 mb-2">
+                      <Upload className="text-slate-400" />
+                      <Video className="text-slate-400" />
+                    </div>
+                    <span className="text-sm text-slate-500">Cliquez pour ajouter une image ou une vidéo courte</span>
                   </>
                 )}
               </div>
@@ -131,6 +140,19 @@ export default function AvisPage() {
           </form>
         )}
       </div>
+
+      {/* SECTION DES AVIS PUBLIÉS (Exemples à remplacer par les vrais avis plus tard) */}
+      <div className="mt-20">
+        <h2 className="text-2xl font-bold text-center mb-10">Derniers avis clients</h2>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <div className="flex text-yellow-400 mb-3"><Star className="fill-current" size={18} /><Star className="fill-current" size={18} /><Star className="fill-current" size={18} /><Star className="fill-current" size={18} /><Star className="fill-current" size={18} /></div>
+            <p className="text-slate-600 mb-4">"Super intervention ! Mon PC est comme neuf. Rapide et efficace."</p>
+            <div className="font-bold text-slate-900 text-sm">- Sophie M.</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }
