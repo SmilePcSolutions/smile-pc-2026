@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={inter.className}>
         {/* Le Header contient déjà la bannière verte, inutile de la mettre ici */}
         <Header />
-        <main className="min-h-screen pt-24 md:pt-28">
+        <main className="min-h-screen pt-32 md:pt-36">
           {children}
         </main>
         <Footer />
@@ -29,4 +29,5 @@ export default function RootLayout({
     </html>
   );
 }
+
 
