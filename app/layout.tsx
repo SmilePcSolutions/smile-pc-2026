@@ -19,14 +19,11 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={inter.className}>
-        {/* LE HEADER FIXE (Hors du flux) */}
         <Header />
         
-        {/* LE SPACER MAGIQUE (Dans le flux) */}
-        {/* Il pousse physiquement le contenu de 120px vers le bas */}
-        <div className="h-[120px] w-full" aria-hidden="true"></div>
+        {/* SPACER 100px - NE PAS TOUCHER */}
+        <div className="h-[100px] w-full block" aria-hidden="true"></div>
 
-        {/* LE CONTENU (Commence après le spacer) */}
         <main className="min-h-screen">
           {children}
         </main>
