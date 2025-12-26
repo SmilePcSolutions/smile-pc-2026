@@ -23,8 +23,12 @@ export default function Header() {
         ✅ Dépannage à domicile sur Moyeuvre-Grande et alentours
       </div>
 
-      {/* CAPSULE FLOTTANTE HYBRIDE (Absolute sur Mobile / Fixed sur PC) */}
-      <header className="absolute md:fixed top-12 left-0 right-0 z-50 px-4 transition-all duration-300 pointer-events-none">
+      {/* HEADER INTELLIGENT (Mobile: Absolute / PC: Fixed Ascenseur) */}
+      <header
+        className={`absolute md:fixed left-0 right-0 z-50 px-4 transition-all duration-500 pointer-events-none
+        ${scrolled ? "md:top-2 top-12" : "md:top-12 top-12"}
+        `}
+      >
         <nav
           className={`mx-auto max-w-6xl rounded-full px-5 py-2.5 transition-all duration-300 pointer-events-auto border
           ${scrolled
@@ -39,10 +43,12 @@ export default function Header() {
               <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-full text-white shadow-sm group-hover:scale-110 transition-transform">
                 <Laptop size={18} />
               </div>
-              <span className="font-bold text-lg text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">Smile PC</span>
+              <span className="font-bold text-lg text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">
+                Smile PC
+              </span>
             </Link>
 
-            {/* MENU ORDI (Centré & Lisible) */}
+            {/* MENU PC */}
             <div className="hidden md:flex items-center bg-slate-100/80 rounded-full px-3 py-1.5 gap-2 border border-slate-200/50">
               <NavLink href="/" label="Accueil" />
               <NavLink href="/services" label="Services & Tarifs" />
@@ -50,10 +56,11 @@ export default function Header() {
               <NavLink href="/apropos" label="À propos" />
             </div>
 
-            {/* BOUTON CONTACT (Affiné) */}
+            {/* CONTACT */}
             <div className="hidden md:block">
               <Link
                 href="/contact"
+                aria-label="Me contacter"
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full font-bold shadow-md transition-all hover:scale-105 hover:shadow-lg text-sm"
               >
                 <Phone size={16} />
@@ -61,9 +68,10 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* BOUTON MOBILE */}
+            {/* MENU MOBILE */}
             <button
               onClick={() => setIsOpen(!isOpen)}
+              aria-label="Ouvrir le menu de navigation"
               className="md:hidden p-2 rounded-full hover:bg-slate-100 text-slate-600 transition-colors"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
