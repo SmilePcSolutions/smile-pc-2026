@@ -19,15 +19,20 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={inter.className}>
-        {/* Le Header contient déjà la bannière verte, inutile de la mettre ici */}
+        {/* LE HEADER FIXE (Hors du flux) */}
         <Header />
-        <main className="min-h-screen pt-32 md:pt-36">
+        
+        {/* LE SPACER MAGIQUE (Dans le flux) */}
+        {/* Il pousse physiquement le contenu de 120px vers le bas */}
+        <div className="h-[120px] w-full" aria-hidden="true"></div>
+
+        {/* LE CONTENU (Commence après le spacer) */}
+        <main className="min-h-screen">
           {children}
         </main>
+        
         <Footer />
       </body>
     </html>
   );
 }
-
-
