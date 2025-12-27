@@ -1,124 +1,91 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
-// Force l'utilisation de Node.js (stabilité + Buffer + uploads)
 export const runtime = "nodejs";
-import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// SÉCURITÉ : Images ET Vidéos autorisées
-// Ajout de video/mp4 (Android/Web) et video/quicktime (iPhone .mov) et webm
+// Support étendu (iPhone HEIC, Vidéos)
 const ALLOWED_TYPES = [
-  'image/jpeg', 'image/png', 'image/webp', 
-  'video/mp4', 'video/quicktime', 'video/webm'
+  "image/jpeg", "image/png", "image/webp", "image/heic", "image/heif",
+  "video/mp4", "video/quicktime", "video/webm",
 ];
 
-// Limite Vercel (environ 4.5 Mo max pour le corps de la requête)
-const MAX_FILE_SIZE = 4.5 * 1024 * 1024; 
+const MAX_FILE_SIZE = 4.5 * 1024 * 1024; // 4.5 Mo
+const MAX_FILES = 1; // 1 fichier pour les avis
+
+function escapeHtml(text: string) {
+  if (!text) return "";
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function sanitizeFilename(name: string) {
+  const base = name.split(/[/\\]/).pop() || "fichier";
+  return base.replace(/[^a-zA-Z0-9._-]+/g, "_").slice(0, 80);
+}
+
+function originAllowed(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+  try {
+    const u = new URL(origin);
+    const host = u.hostname.toLowerCase();
+    return host === "smilepcsolutions.fr" || host === "www.smilepcsolutions.fr" || host.includes("localhost") || host.endsWith(".vercel.app");
+  } catch { return false; }
+}
 
 export async function POST(request: Request) {
   try {
+    if (!originAllowed(request)) return NextResponse.json({ error: "Origin refusée." }, { status: 403 });
+
     const formData = await request.formData();
-    
-    // 🛡️ SÉCURITÉ 1 : HONEYPOT (Anti-Bot)
-    // Si le champ caché est rempli, on simule un succès et on arrête (ne pas envoyer d'email).
-    if (formData.get("honeypot_company")) {
-      console.warn("🤖 Bot bloqué par Honeypot");
-      return NextResponse.json({ success: true });
-    }
 
-    // 🛡️ SÉCURITÉ 2 : TYPAGE STRICT (Anti-Crash)
-    // On vérifie les champs critiques avant toute logique métier existante.
-    const __nom = formData.get("nom");
-    const __email = formData.get("email");
-    const __message = formData.get("message");
+    if (formData.get("honeypot_company")) return NextResponse.json({ success: true });
 
-    if (
-      typeof __nom !== "string" || !__nom.trim() ||
-      typeof __email !== "string" || !__email.trim() ||
-      typeof __message !== "string" || !__message.trim()
-    ) {
-      return NextResponse.json(
-        { error: "Champs obligatoires manquants ou invalides." },
-        { status: 400 }
-      );
-    }
-const nom = formData.get('nom') as string;
-    const email = formData.get('email') as string;
-    const note = formData.get('note') as string;
-    const message = formData.get('message') as string;
-    const files = formData.getAll('files') as File[];
+    const nom = formData.get("nom") as string;
+    const note = formData.get("note") as string;
+    const message = formData.get("message") as string;
+    const email = formData.get("email") as string;
 
-    // 1. Vérification que les champs obligatoires sont remplis
     if (!nom || !note || !message) {
-      return NextResponse.json({ error: "Merci de remplir la note et le message." }, { status: 400 });
+      return NextResponse.json({ error: "Champs obligatoires manquants." }, { status: 400 });
     }
 
-    // 2. Vérification de sécurité des fichiers
-    for (const file of files) {
-      if (file.size > 0) {
-        // Vérification du TYPE
-        if (!ALLOWED_TYPES.includes(file.type)) {
-          return NextResponse.json({ error: "Format non supporté. Envoyez une image ou une vidéo (MP4/MOV)." }, { status: 400 });
-        }
-        // Vérification de la TAILLE
-        if (file.size > MAX_FILE_SIZE) {
-          return NextResponse.json({ error: `Le fichier est trop lourd (${(file.size / 1024 / 1024).toFixed(1)} Mo). Limite : 4.5 Mo.` }, { status: 400 });
-        }
-      }
+    const files = formData.getAll("files") as File[]; // On utilise bien "files"
+    const realFiles = files.filter((f) => f && f.size > 0);
+
+    if (realFiles.length > MAX_FILES) return NextResponse.json({ error: "Trop de fichiers." }, { status: 400 });
+
+    const attachments = [];
+    for (const file of realFiles) {
+      if (!ALLOWED_TYPES.includes(file.type)) return NextResponse.json({ error: "Format non supporté." }, { status: 400 });
+      if (file.size > MAX_FILE_SIZE) return NextResponse.json({ error: "Fichier trop lourd." }, { status: 400 });
+      
+      const buf = Buffer.from(await file.arrayBuffer());
+      attachments.push({ filename: sanitizeFilename(file.name), content: buf });
     }
 
-    // 3. Préparation des pièces jointes
-    const attachments = await Promise.all(
-      files.filter(f => f.size > 0).map(async (file) => ({
-        filename: file.name,
-        content: Buffer.from(await file.arrayBuffer()),
-      }))
-    );
+    const safeNom = escapeHtml(nom);
+    const safeEmail = email ? escapeHtml(email) : "";
+    const safeMessage = escapeHtml(message).replace(/\n/g, "<br>");
+    const noteNum = Number(note);
 
-    // 4. Création des étoiles visuelles
-    const stars = "⭐".repeat(parseInt(note));
-
-    // 5. Design du mail que TU vas recevoir
-    const emailHtml = `
-      <!DOCTYPE html>
-      <html>
-      <body style="font-family: sans-serif; padding: 20px;">
-        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 10px;">
-          <h2 style="color: #2563eb;">Nouvel Avis Client Reçu ! 🎉</h2>
-          <p><strong>Client :</strong> ${nom} (${email || "Pas d'email"})</p>
-          
-          <div style="background: #fdfce7; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <p style="font-size: 24px; margin: 0;">${stars} (${note}/5)</p>
-          </div>
-
-          <p><strong>Message :</strong></p>
-          <blockquote style="background: #f9f9f9; padding: 15px; border-left: 4px solid #2563eb;">
-            ${message.replace(/\n/g, '<br>')}
-          </blockquote>
-          
-          <p style="font-size: 12px; color: #666; margin-top: 20px;">
-            Pièce jointe (Photo ou Vidéo) incluse dans ce mail si le client en a ajouté une.
-          </p>
-        </div>
-      </body>
-      </html>
-    `;
-
-    // 6. Envoi via Resend
-    const data = await resend.emails.send({
-      from: 'Smile PC Avis <contact@smilepcsolutions.fr>',
-      to: ['misterjojo057@gmail.com'],
-      subject: `⭐ Nouvel avis de ${nom} : ${note}/5`,
-      attachments: attachments,
-      html: emailHtml,
+    await resend.emails.send({
+      from: "Smile PC Avis <onboarding@resend.dev>",
+      to: ["misterjojo057@gmail.com"], // Ton email perso
+      reply_to: email || undefined,
+      subject: `⭐ Nouvel avis de ${safeNom} : ${noteNum}/5`,
+      html: `
+        <h2>Nouvel Avis Client</h2>
+        <p><strong>Client :</strong> ${safeNom} ${safeEmail ? `(${safeEmail})` : ""}</p>
+        <p><strong>Note :</strong> ${noteNum}/5 ⭐</p>
+        <blockquote style="background: #f9f9f9; padding: 15px; border-left: 4px solid #2563eb;">${safeMessage}</blockquote>
+      `,
+      attachments,
     });
 
-    if (data.error) return NextResponse.json({ error: data.error }, { status: 500 });
     return NextResponse.json({ success: true });
-
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
-
