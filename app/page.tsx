@@ -1,11 +1,13 @@
 import Hero from "@/components/Hero";
-import Services from "@/components/Services";
+import Reviews from "@/components/Reviews";
+import About from "@/components/About";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col overflow-hidden">
+    <main>
       <Hero />
-      <Services />
+      <Reviews />
+      <About />
     </main>
   );
 }
