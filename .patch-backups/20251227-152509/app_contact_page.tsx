@@ -90,15 +90,6 @@ export default function ContactPage() {
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-      {/* 🛡️ SÉCURITÉ : Honeypot Anti-Bot (Invisible) */}
-      <input
-        type="text"
-        name="honeypot_company"
-        tabIndex={-1}
-        autoComplete="off"
-        className="hidden"
-        aria-hidden="true"
-      />
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700 ml-1">Prénom <span className="text-red-500">*</span></label>
@@ -200,4 +191,3 @@ export default function ContactPage() {
     </div>
   );
 }
-

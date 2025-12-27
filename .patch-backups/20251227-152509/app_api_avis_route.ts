@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-
-// Force l'utilisation de Node.js (stabilité + Buffer + uploads)
-export const runtime = "nodejs";
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -19,31 +16,7 @@ const MAX_FILE_SIZE = 4.5 * 1024 * 1024;
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    
-    // 🛡️ SÉCURITÉ 1 : HONEYPOT (Anti-Bot)
-    // Si le champ caché est rempli, on simule un succès et on arrête (ne pas envoyer d'email).
-    if (formData.get("honeypot_company")) {
-      console.warn("🤖 Bot bloqué par Honeypot");
-      return NextResponse.json({ success: true });
-    }
-
-    // 🛡️ SÉCURITÉ 2 : TYPAGE STRICT (Anti-Crash)
-    // On vérifie les champs critiques avant toute logique métier existante.
-    const __nom = formData.get("nom");
-    const __email = formData.get("email");
-    const __message = formData.get("message");
-
-    if (
-      typeof __nom !== "string" || !__nom.trim() ||
-      typeof __email !== "string" || !__email.trim() ||
-      typeof __message !== "string" || !__message.trim()
-    ) {
-      return NextResponse.json(
-        { error: "Champs obligatoires manquants ou invalides." },
-        { status: 400 }
-      );
-    }
-const nom = formData.get('nom') as string;
+    const nom = formData.get('nom') as string;
     const email = formData.get('email') as string;
     const note = formData.get('note') as string;
     const message = formData.get('message') as string;
@@ -121,4 +94,3 @@ const nom = formData.get('nom') as string;
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

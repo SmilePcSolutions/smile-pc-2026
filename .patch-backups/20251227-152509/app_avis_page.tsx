@@ -62,15 +62,6 @@ export default function AvisPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-8">
-      {/* 🛡️ SÉCURITÉ : Honeypot Anti-Bot (Invisible) */}
-      <input
-        type="text"
-        name="honeypot_company"
-        tabIndex={-1}
-        autoComplete="off"
-        className="hidden"
-        aria-hidden="true"
-      />
             
             {/* SÉLECTEUR D'ÉTOILES */}
             <div className="flex flex-col items-center gap-4 mb-8">
