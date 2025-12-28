@@ -8,26 +8,39 @@ export default function Hero() {
       <div className="absolute top-0 left-0 right-0 -z-10 mx-auto h-[500px] w-full max-w-4xl rounded-full bg-blue-100/50 blur-[100px] opacity-70 mix-blend-multiply"></div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 relative text-center">
+        
+        {/* Badges */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-blue-100 text-blue-700 text-xs md:text-sm font-semibold shadow-sm">
             <MapPin size={14} className="text-blue-500" /> Moyeuvre-Grande & Alentours
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-orange-800 text-xs md:text-sm font-semibold shadow-sm">
-            <div className="flex text-orange-500"><Star size={12} fill="currentColor" /><Star size={12} fill="currentColor" /><Star size={12} fill="currentColor" /><Star size={12} fill="currentColor" /><Star size={12} fill="currentColor" /></div>
+            <div className="flex text-orange-500">
+              <Star size={12} fill="currentColor" />
+              <Star size={12} fill="currentColor" />
+              <Star size={12} fill="currentColor" />
+              <Star size={12} fill="currentColor" />
+              <Star size={12} fill="currentColor" />
+            </div>
             <span className="text-orange-900/80">Satisfaction Garantie</span>
           </div>
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-[1.05] animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 drop-shadow-sm">
+        {/* TITRE MIS À JOUR : COHÉRENT AVEC LA RÉALITÉ */}
+        <h1 className="text-4xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-[1.1] animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 drop-shadow-sm">
           Votre Expert Informatique <br />
-          <span className="relative inline-block text-blue-600">à Domicile</span>
+          <span className="relative inline-block text-blue-600">
+            à Domicile, Atelier & Distance
+          </span>
         </h1>
 
+        {/* SOUS-TITRE MIS À JOUR */}
         <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
           Un problème informatique, c’est toujours au mauvais moment.
-          <span className="hidden md:inline"> J'interviens rapidement chez vous pour réparer, sécuriser et optimiser votre matériel.</span>
+          <span className="hidden md:inline"> J’interviens à domicile, à distance ou en atelier selon le problème, pour réparer et optimiser votre matériel.</span>
         </p>
 
+        {/* Boutons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
           <Link href="/contact" className="group w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-lg shadow-blue-200 shadow-lg transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
             Prendre Rendez-vous <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -37,6 +50,7 @@ export default function Hero() {
           </Link>
         </div>
 
+        {/* Arguments */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
           <div className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-white/60 backdrop-blur-sm border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
             <div className="p-3 bg-green-100 text-green-700 rounded-xl"><MapPin size={24} /></div>
@@ -51,6 +65,7 @@ export default function Hero() {
             <div className="text-center"><h3 className="font-bold text-slate-900">Intervention Rapide</h3><p className="text-sm text-slate-500">Dépannage sous 24/48h</p></div>
           </div>
         </div>
+
       </div>
     </section>
   );
