@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import JsonLd from "@/components/JsonLd"; // ✅ On importe le JSON-LD
+import JsonLd from "@/components/JsonLd";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,8 +39,9 @@ export default function RootLayout({
   return (
     <html lang="fr" className="scroll-smooth">
       <body className={`${inter.className} antialiased text-slate-900 bg-white`}>
-        <JsonLd /> {/* ✅ On l'active ici */}
+        <JsonLd />
         <Header />
+        {/* LE pt-20 ICI EST CRUCIAL POUR LE MENU FIXE 👇 */}
         <main className="min-h-screen flex flex-col pt-20">
           {children}
         </main>
