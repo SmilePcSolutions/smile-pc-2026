@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Laptop,
   Wifi,
@@ -24,13 +26,13 @@ const services: Service[] = [
     icon: <Wifi size={24} />,
     title: "Réseau, Internet & Box",
     description:
-      "Dépannage Wi-Fi / Ethernet, pertes de connexion, configuration box Internet, imprimantes et équipements réseau.",
+      "Dépannage Wi-Fi / Ethernet, pertes de connexion, configuration de box Internet, imprimantes et équipements réseau.",
   },
   {
     icon: <ShieldCheck size={24} />,
     title: "Sécurité & Nettoyage",
     description:
-      "Suppression de virus, publicités, malwares, sécurisation de base et bonnes pratiques pour éviter les infections.",
+      "Suppression de virus, publicités et malwares, sécurisation de base et bonnes pratiques pour éviter les infections.",
   },
   {
     icon: <Database size={24} />,
@@ -57,7 +59,7 @@ export default function Services() {
     <section className="py-24 bg-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         
-        {/* Titre Simple */}
+        {/* Titre */}
         <div className="text-center mb-16">
           <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">
             Mes prestations
@@ -67,18 +69,19 @@ export default function Services() {
           </p>
         </div>
 
-        {/* Liste Fluide (Design "Z" léger) */}
+        {/* Liste épurée */}
         <div className="space-y-12">
           {services.map((service) => (
             <div
               key={service.title}
               className="flex items-start gap-6 group"
             >
-              {/* Icône dans un cercle léger */}
+              {/* Icône */}
               <div className="flex-shrink-0 p-4 rounded-2xl bg-slate-50 text-blue-600 group-hover:bg-blue-50 transition-colors">
                 {service.icon}
               </div>
 
+              {/* Texte */}
               <div>
                 <h3 className="font-bold text-slate-900 text-lg mb-2 group-hover:text-blue-600 transition-colors">
                   {service.title}
@@ -91,12 +94,17 @@ export default function Services() {
           ))}
         </div>
 
-        {/* Note importante (Cadre Orange) */}
+        {/* Note importante */}
         <div className="mt-16 rounded-xl border border-orange-100 bg-orange-50/50 p-6 text-sm text-orange-900/80 leading-relaxed">
-          <strong>⚠️ Important :</strong> Je ne réalise pas de réparations matérielles (écrans cassés, batteries, micro-soudure) sur les smartphones, tablettes ou montres connectées.
-          <br className="mb-2"/>
-          👉 J'interviens uniquement sur la partie <strong>logicielle, configuration et accompagnement</strong>.
+          <strong>⚠️ Important :</strong> Je ne réalise pas de réparations matérielles
+          (écrans cassés, batteries, micro-soudure) sur les smartphones, tablettes
+          ou montres connectées.
+          <p className="mt-2">
+            👉 J’interviens uniquement sur la partie{" "}
+            <strong>logicielle, configuration et accompagnement</strong>.
+          </p>
         </div>
+
       </div>
     </section>
   );
