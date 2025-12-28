@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   },
   description: "Expert en dépannage informatique à domicile, maintenance PC/Mac, suppression de virus et formation. Intervention rapide sur Moyeuvre-Grande (57) et alentours.",
   metadataBase: new URL("https://www.smilepcsolutions.fr"),
+  
+  // 👇 TON CODE DE VALIDATION GOOGLE EST ICI 👇
+  verification: {
+    google: 'Cs0rhhmDH6XpUNa5VQRnIHcT2mxWaa7isY2hXeLQsys',
+  },
+  
   alternates: {
     canonical: "https://www.smilepcsolutions.fr/",
   },
@@ -41,7 +47,7 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased text-slate-900 bg-white`}>
         <JsonLd />
         <Header />
-        {/* LE pt-20 ICI EST CRUCIAL POUR LE MENU FIXE 👇 */}
+        {/* Padding-top de 80px (pt-20) pour que le menu fixe ne cache pas le texte */}
         <main className="min-h-screen flex flex-col pt-20">
           {children}
         </main>
