@@ -1,102 +1,101 @@
-import Link from "next/link";
 import {
-  Cpu,
+  Laptop,
   Wifi,
-  HardDrive,
+  ShieldCheck,
   Smartphone,
+  Database,
+  HelpCircle,
 } from "lucide-react";
 
-type Category = {
-  title: string;
+type Service = {
   icon: React.ReactNode;
-  items: string[];
-  note?: string;
+  title: string;
+  description: string;
 };
 
-const categories: Category[] = [
+const services: Service[] = [
   {
-    title: "Maintenance & PC",
-    icon: <Cpu size={24} aria-hidden="true" />,
-    items: [
-      "Réinstallation complète (Windows, pilotes, logiciels).",
-      "Optimisation pour un PC plus rapide.",
-      "Restauration système constructeur.",
-      "Conseils pour garder un ordinateur stable.",
-    ],
+    icon: <Laptop size={24} />,
+    title: "Maintenance & Optimisation PC",
+    description:
+      "Réinstallation Windows, mises à jour, nettoyage, optimisation des performances et conseils pour garder un PC stable et rapide.",
   },
   {
-    title: "Réseau & Box",
-    icon: <Wifi size={24} aria-hidden="true" />,
-    items: [
-      "Dépannage Wi-Fi / Ethernet et lenteurs.",
-      "Installation Box Internet et réseau.",
-      "Configuration imprimante en Wi-Fi.",
-      "Optimisation de la connexion.",
-    ],
+    icon: <Wifi size={24} />,
+    title: "Réseau, Internet & Box",
+    description:
+      "Dépannage Wi-Fi / Ethernet, pertes de connexion, configuration box Internet, imprimantes et équipements réseau.",
   },
   {
-    title: "Données & Sécurité",
-    icon: <HardDrive size={24} aria-hidden="true" />,
-    items: [
-      "Sauvegarde de vos documents importants.",
-      "Tentative de récupération de fichiers perdus.",
-      "Nettoyage virus, pubs et malwares.",
-      "Installation de périphériques (scanners, etc.).",
-    ],
+    icon: <ShieldCheck size={24} />,
+    title: "Sécurité & Nettoyage",
+    description:
+      "Suppression de virus, publicités, malwares, sécurisation de base et bonnes pratiques pour éviter les infections.",
   },
   {
-    title: "Mobiles & Accompagnement",
-    icon: <Smartphone size={24} aria-hidden="true" />,
-    items: [
-      "Cours d'informatique et aide à la prise en main.",
-      "Réglages comptes, mails et mots de passe.",
-      "Assistance opérateur (je les appelle pour vous).",
-      "Configuration Montres et Objets connectés.",
-    ],
-    note: "Important : Je ne change PAS les écrans ni les batteries (Smartphones, Tablettes, Montres). Logiciel uniquement.",
+    icon: <Database size={24} />,
+    title: "Données & Sauvegardes",
+    description:
+      "Sauvegarde de vos données importantes et tentative de récupération de fichiers supprimés ou perdus.",
+  },
+  {
+    icon: <Smartphone size={24} />,
+    title: "Smartphones, Tablettes & Montres",
+    description:
+      "Aide à la prise en main, réglages logiciels, comptes, sauvegardes et accompagnement numérique.",
+  },
+  {
+    icon: <HelpCircle size={24} />,
+    title: "Accompagnement & Assistance",
+    description:
+      "Cours d’informatique personnalisés, aide administrative numérique et contact avec votre opérateur si besoin.",
   },
 ];
 
 export default function Services() {
   return (
-    <section className="relative py-20 bg-slate-50/50">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mx-auto max-w-3xl text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-slate-900 md:text-4xl mb-4">
-            Mes prestations <span className="text-blue-600">sur mesure</span>
-          </h2>
+    <section className="py-24 bg-white">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        
+        {/* Titre Simple */}
+        <div className="text-center mb-16">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">
+            Mes prestations
+          </h1>
           <p className="text-lg text-slate-600">
-            Des solutions claires et fiables, sans jargon inutile.
+            Des services clairs, utiles et adaptés à vos besoins réels.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {categories.map((cat) => (
+        {/* Liste Fluide (Design "Z" léger) */}
+        <div className="space-y-12">
+          {services.map((service) => (
             <div
-              key={cat.title}
-              className="rounded-xl border border-slate-200 bg-white p-6 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)]"
+              key={service.title}
+              className="flex items-start gap-6 group"
             >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                  {cat.icon}
-                </div>
-                <h3 className="text-xl font-bold text-slate-900">{cat.title}</h3>
+              {/* Icône dans un cercle léger */}
+              <div className="flex-shrink-0 p-4 rounded-2xl bg-slate-50 text-blue-600 group-hover:bg-blue-50 transition-colors">
+                {service.icon}
               </div>
-              <ul className="space-y-3">
-                {cat.items.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-slate-700 text-sm md:text-base">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              {cat.note ? (
-                <div className="mt-6 rounded-lg bg-orange-50 px-4 py-3 text-sm text-orange-800 border border-orange-100">
-                  {cat.note}
-                </div>
-              ) : null}
+
+              <div>
+                <h3 className="font-bold text-slate-900 text-lg mb-2 group-hover:text-blue-600 transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-slate-600 leading-relaxed text-base">
+                  {service.description}
+                </p>
+              </div>
             </div>
           ))}
+        </div>
+
+        {/* Note importante (Cadre Orange) */}
+        <div className="mt-16 rounded-xl border border-orange-100 bg-orange-50/50 p-6 text-sm text-orange-900/80 leading-relaxed">
+          <strong>⚠️ Important :</strong> Je ne réalise pas de réparations matérielles (écrans cassés, batteries, micro-soudure) sur les smartphones, tablettes ou montres connectées.
+          <br className="mb-2"/>
+          👉 J'interviens uniquement sur la partie <strong>logicielle, configuration et accompagnement</strong>.
         </div>
       </div>
     </section>
