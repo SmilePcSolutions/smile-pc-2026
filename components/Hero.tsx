@@ -1,68 +1,67 @@
 import Link from 'next/link';
-import { ArrowRight, MapPin, Star, ShieldCheck, Zap } from 'lucide-react';
+import { ArrowRight, MapPin, ShieldCheck, Zap } from 'lucide-react';
 
 export default function Hero() {
   return (
-    <section className="relative pt-36 pb-24 lg:pt-48 lg:pb-40 overflow-hidden bg-white selection:bg-blue-100">
-      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
-      <div className="absolute top-0 left-0 right-0 -z-10 mx-auto h-[500px] w-full max-w-4xl rounded-full bg-blue-100/50 blur-[100px] opacity-70 mix-blend-multiply"></div>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative text-center">
+    <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-slate-50">
+      
+      {/* Fond avec forme arrondie douce en bas */}
+      <div className="absolute inset-0 bg-white rounded-b-[3rem] shadow-sm -z-10 h-[90%] w-full"></div>
+      
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
         
-        {/* Badges */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-blue-100 text-blue-700 text-xs md:text-sm font-semibold shadow-sm">
-            <MapPin size={14} className="text-blue-500" /> Moyeuvre-Grande & Alentours
-          </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-orange-800 text-xs md:text-sm font-semibold shadow-sm">
-            <div className="flex text-orange-500">
-              <Star size={12} fill="currentColor" />
-              <Star size={12} fill="currentColor" />
-              <Star size={12} fill="currentColor" />
-              <Star size={12} fill="currentColor" />
-              <Star size={12} fill="currentColor" />
-            </div>
-            <span className="text-orange-900/80">Satisfaction Garantie</span>
-          </div>
+        {/* Badge Zone */}
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-sm font-semibold mb-8 shadow-sm border border-blue-100">
+          <MapPin size={16} /> Moyeuvre-Grande & Alentours
         </div>
 
-        {/* TITRE MIS À JOUR : COHÉRENT AVEC LA RÉALITÉ */}
-        <h1 className="text-4xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-[1.1] animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 drop-shadow-sm">
+        {/* Titre Centré & Impactant */}
+        <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
           Votre Expert Informatique <br />
-          <span className="relative inline-block text-blue-600">
-            à Domicile, Atelier & Distance
-          </span>
+          <span className="text-blue-600">Proche de Vous</span>
         </h1>
 
-        {/* SOUS-TITRE MIS À JOUR */}
-        <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-          Un problème informatique, c’est toujours au mauvais moment.
-          <span className="hidden md:inline"> J’interviens à domicile, à distance ou en atelier selon le problème, pour réparer et optimiser votre matériel.</span>
+        {/* Sous-titre clair */}
+        <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+          Dépannage, assistance et conseils à domicile, en atelier ou à distance.
+          Une solution simple et rapide pour tous vos soucis numériques.
         </p>
 
-        {/* Boutons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
-          <Link href="/contact" className="group w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-lg shadow-blue-200 shadow-lg transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
-            Prendre Rendez-vous <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <Link href="/prestations" className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-2xl font-bold text-lg transition-all hover:border-slate-300 flex items-center justify-center">
-            Voir les Prestations
+        {/* UN SEUL BOUTON PRINCIPAL */}
+        <div className="flex justify-center mb-16">
+          <Link
+            href="/contact"
+            className="group px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold text-lg shadow-lg hover:shadow-blue-500/30 transition-all transform hover:-translate-y-1 flex items-center gap-2"
+          >
+            Me Contacter
+            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        {/* Arguments */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
-          <div className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-white/60 backdrop-blur-sm border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="p-3 bg-green-100 text-green-700 rounded-xl"><MapPin size={24} /></div>
-            <div className="text-center"><h3 className="font-bold text-slate-900">Déplacement Inclus</h3><p className="text-sm text-slate-500">Moyeuvre & 20km alentours</p></div>
+        {/* Arguments (Icônes simples et centrées) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="flex flex-col items-center gap-3">
+            <div className="p-3 bg-green-100 text-green-700 rounded-2xl mb-2">
+              <MapPin size={28} />
+            </div>
+            <h3 className="font-bold text-slate-900 text-lg">Déplacement Inclus</h3>
+            <p className="text-sm text-slate-500">Moyeuvre & 20km alentours</p>
           </div>
-          <div className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-white/60 backdrop-blur-sm border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="p-3 bg-blue-100 text-blue-700 rounded-xl"><ShieldCheck size={24} /></div>
-            <div className="text-center"><h3 className="font-bold text-slate-900">Devis Gratuit</h3><p className="text-sm text-slate-500">Aucune mauvaise surprise</p></div>
+          
+          <div className="flex flex-col items-center gap-3">
+            <div className="p-3 bg-blue-100 text-blue-700 rounded-2xl mb-2">
+              <ShieldCheck size={28} />
+            </div>
+            <h3 className="font-bold text-slate-900 text-lg">Pas de Surprise</h3>
+            <p className="text-sm text-slate-500">Devis clair avant intervention</p>
           </div>
-          <div className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-white/60 backdrop-blur-sm border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="p-3 bg-orange-100 text-orange-700 rounded-xl"><Zap size={24} /></div>
-            <div className="text-center"><h3 className="font-bold text-slate-900">Intervention Rapide</h3><p className="text-sm text-slate-500">Dépannage sous 24/48h</p></div>
+
+          <div className="flex flex-col items-center gap-3">
+            <div className="p-3 bg-orange-100 text-orange-700 rounded-2xl mb-2">
+              <Zap size={28} />
+            </div>
+            <h3 className="font-bold text-slate-900 text-lg">Rapide & Efficace</h3>
+            <p className="text-sm text-slate-500">Intervention sous 24/48h</p>
           </div>
         </div>
 
