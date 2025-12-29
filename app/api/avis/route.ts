@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { supabase } from "@/lib/supabase"; // 👈 C'est cette ligne que le script cherchait !
 
 export const runtime = "nodejs";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Types de fichiers autorisés
 const ALLOWED_TYPES = [
   "image/jpeg", "image/png", "image/webp", "image/heic", "image/heif",
   "video/mp4", "video/quicktime", "video/webm",
@@ -14,7 +14,7 @@ const ALLOWED_TYPES = [
 const MAX_FILE_SIZE = 4.5 * 1024 * 1024; // 4.5 Mo
 const MAX_FILES = 1;
 
-// Fonctions utilitaires propres
+// --- Fonctions Utilitaires ---
 function escapeHtml(text: string): string {
   if (!text) return "";
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
@@ -37,19 +37,19 @@ function originAllowed(request: Request): boolean {
 
 export async function POST(request: Request) {
   try {
-    // 1. Sécurité Origine
+    // 1. SÉCURITÉ : Vérification Origine
     if (!originAllowed(request)) {
       return NextResponse.json({ error: "Origin refusée." }, { status: 403 });
     }
 
     const formData = await request.formData();
 
-    // 2. HONEYPOT
+    // 2. HONEYPOT (Anti-Robot)
     if (formData.get("b_check")) {
       return NextResponse.json({ success: true });
     }
 
-    // 3. Données
+    // 3. RÉCUPÉRATION DONNÉES
     const nom = formData.get("nom") as string;
     const note = formData.get("note") as string;
     const message = formData.get("message") as string;
@@ -59,7 +59,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Champs obligatoires manquants." }, { status: 400 });
     }
 
-    // 4. Fichiers
+    // 4. SAUVEGARDE DANS SUPABASE (La Nouveauté !) 💾
+    // On enregistre les données brutes pour l'admin
+    const { error: dbError } = await supabase
+      .from('avis')
+      .insert([
+        {
+          nom: nom,
+          note: Number(note),
+          message: message,
+          email: email,
+          approved: false, // Par défaut, c'est NON validé (sécurité)
+          verified: false
+        }
+      ]);
+
+    if (dbError) {
+      console.error("❌ Erreur Supabase:", dbError);
+    }
+
+    // 5. TRAITEMENT FICHIERS (Pour l'email)
     const files = formData.getAll("files") as File[];
     const realFiles = files.filter((f) => f && f.size > 0);
 
@@ -69,41 +88,36 @@ export async function POST(request: Request) {
 
     const attachments = [];
     for (const file of realFiles) {
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        return NextResponse.json({ error: "Format non supporté." }, { status: 400 });
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json({ error: "Fichier trop lourd." }, { status: 400 });
-      }
+      if (!ALLOWED_TYPES.includes(file.type)) return NextResponse.json({ error: "Format non supporté." }, { status: 400 });
+      if (file.size > MAX_FILE_SIZE) return NextResponse.json({ error: "Fichier trop lourd." }, { status: 400 });
       
       const buf = Buffer.from(await file.arrayBuffer());
       attachments.push({ filename: sanitizeFilename(file.name), content: buf });
     }
 
-    // 5. Nettoyage
+    // 6. ENVOI EMAIL (Comme avant)
     const safeNom = escapeHtml(nom);
     const safeEmail = email ? escapeHtml(email) : "";
     const safeMessage = escapeHtml(message).replace(/\n/g, "<br>");
     const noteNum = Number(note);
 
-    // 6. Envoi email via Resend
-    // ✅ CORRECTION GPT : On utilise TON domaine pro validé
     await resend.emails.send({
-      from: "Smile PC Avis <contact@smilepcsolutions.fr>", // ICI c'est ton vrai domaine
+      from: "Smile PC Avis <contact@smilepcsolutions.fr>",
       to: ["misterjojo057@gmail.com"],
       reply_to: email && email.includes("@") ? email : undefined,
       subject: `⭐ Nouvel avis de ${safeNom} : ${noteNum}/5`,
       html: `
-        <h2>Nouvel Avis Client</h2>
+        <h2>Nouvel Avis Client (Sauvegardé en BDD ✅)</h2>
         <p><strong>Client :</strong> ${safeNom} ${safeEmail ? `(${safeEmail})` : ""}</p>
         <p><strong>Note :</strong> ${noteNum}/5 ⭐</p>
         <blockquote style="background: #f9f9f9; padding: 15px; border-left: 4px solid #2563eb;">${safeMessage}</blockquote>
+        <p style="color: #666; font-size: 12px; margin-top: 20px;">Cet avis est en attente de validation dans ton futur panneau admin.</p>
       `,
       attachments,
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error("Erreur API Avis:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
