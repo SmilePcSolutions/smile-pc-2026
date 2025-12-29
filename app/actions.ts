@@ -36,6 +36,6 @@ export async function deleteAvis(id: number) {
 
 export async function logout() {
   const store = await cookies();
-  store.delete("admin_session", { path: "/" });
+  store.delete("admin_session"); // CORRECTION ICI (1 seul argument)
   revalidatePath("/bunker-smile-758");
 }
