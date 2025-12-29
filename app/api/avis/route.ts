@@ -14,7 +14,7 @@ const ALLOWED_TYPES = [
 const MAX_FILE_SIZE = 4.5 * 1024 * 1024; // 4.5 Mo
 const MAX_FILES = 1;
 
-// Fonctions utilitaires propres (Types explicites)
+// Fonctions utilitaires propres
 function escapeHtml(text: string): string {
   if (!text) return "";
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
@@ -37,19 +37,19 @@ function originAllowed(request: Request): boolean {
 
 export async function POST(request: Request) {
   try {
-    // 1. Sécurité : Vérification de l'origine
+    // 1. Sécurité Origine
     if (!originAllowed(request)) {
       return NextResponse.json({ error: "Origin refusée." }, { status: 403 });
     }
 
     const formData = await request.formData();
 
-    // 2. HONEYPOT "NINJA"
+    // 2. HONEYPOT
     if (formData.get("b_check")) {
       return NextResponse.json({ success: true });
     }
 
-    // 3. Récupération des données
+    // 3. Données
     const nom = formData.get("nom") as string;
     const note = formData.get("note") as string;
     const message = formData.get("message") as string;
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Champs obligatoires manquants." }, { status: 400 });
     }
 
-    // 4. Traitement sécurisé des fichiers
+    // 4. Fichiers
     const files = formData.getAll("files") as File[];
     const realFiles = files.filter((f) => f && f.size > 0);
 
@@ -80,15 +80,16 @@ export async function POST(request: Request) {
       attachments.push({ filename: sanitizeFilename(file.name), content: buf });
     }
 
-    // 5. Nettoyage des entrées (Protection XSS)
+    // 5. Nettoyage
     const safeNom = escapeHtml(nom);
     const safeEmail = email ? escapeHtml(email) : "";
     const safeMessage = escapeHtml(message).replace(/\n/g, "<br>");
     const noteNum = Number(note);
 
     // 6. Envoi email via Resend
+    // ✅ CORRECTION GPT : On utilise TON domaine pro validé
     await resend.emails.send({
-      from: "Smile PC Avis <onboarding@resend.dev>",
+      from: "Smile PC Avis <contact@smilepcsolutions.fr>", // ICI c'est ton vrai domaine
       to: ["misterjojo057@gmail.com"],
       reply_to: email && email.includes("@") ? email : undefined,
       subject: `⭐ Nouvel avis de ${safeNom} : ${noteNum}/5`,
