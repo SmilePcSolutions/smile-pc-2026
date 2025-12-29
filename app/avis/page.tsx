@@ -1,221 +1,89 @@
-"use client";
-import { useState, useRef, FormEvent, ChangeEvent } from "react";
-import { Star, Upload, CheckCircle, Loader2, Send, Video, Quote } from "lucide-react";
+import { getAvis } from "@/app/actions";
+import AvisForm from "@/components/AvisForm";
+import { Star, Quote, Calendar } from "lucide-react";
 
-// 👇 CONFIGURATION : Tes avis validés
-const AVIS_CLIENTS = [
-  {
-    nom: "Annie",
-    date: "Il y a quelques heures",
-    note: 5,
-    message: "Franchement je vois la différence depuis que j'ai été chez Smile PC. Mon ordinateur est plus rapide, plus stable, c'est à recommander les yeux fermés.",
-    verified: true
-  },
-];
+export const dynamic = "force-dynamic";
 
-export default function AvisPage() {
-  const [rating, setRating] = useState(5);
-  const [hover, setHover] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
-
-  // 🛡️ TYPAGE STRICT (Senior)
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // 💡 ASTUCE SENIOR : On sauvegarde la référence du formulaire AVANT l'attente (await)
-    // Cela évite le bug "null" lors du reset à la fin
-    const form = e.currentTarget; 
-    const formData = new FormData(form);
-    
-    formData.append('note', rating.toString());
-    
-    if (file) {
-      formData.append('files', file);
-    }
-
-    try {
-      const res = await fetch('/api/avis', { 
-        method: 'POST', 
-        body: formData 
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Erreur lors de l'envoi");
-      }
-      
-      // Succès
-      setIsSuccess(true);
-      setFile(null);
-      setRating(5);
-      
-      // ✅ RESET SÉCURISÉ (On utilise la variable sauvegardée au début)
-      form.reset();
-
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Une erreur inconnue est survenue";
-      alert("Oups : " + message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
+export default async function AvisPage() {
+  const allAvis = await getAvis();
+  const avisPublies = allAvis.filter(avis => avis.approved);
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
+    <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
       
-      {/* HEADER */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-slate-900 mb-4">Votre avis compte ! ⭐</h1>
-        <p className="text-slate-600">Aidez-nous à nous améliorer et partagez votre expérience.</p>
+      {/* TITRE PLUS PETIT */}
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-slate-900">Avis Clients ⭐</h1>
+        <p className="text-slate-500 mt-2">Partagez votre expérience Smile PC</p>
       </div>
 
-      {/* FORMULAIRE */}
-      <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-slate-100 mb-24">
+      {/* FORMULAIRE (Plus compact maintenant) */}
+      <AvisForm />
+
+      {/* LISTE DES AVIS */}
+      <div className="max-w-3xl mx-auto mt-16">
+        <h2 className="text-2xl font-bold text-slate-900 mb-8 border-l-4 border-blue-600 pl-4">
+          Derniers avis ({avisPublies.length})
+        </h2>
         
-        {isSuccess ? (
-          <div className="text-center py-12 animate-fade-in-up">
-            <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle size={40} />
-            </div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-2">Merci pour votre avis !</h3>
-            <p className="text-slate-600">Nous avons bien reçu votre commentaire.</p>
-            <button onClick={() => setIsSuccess(false)} className="mt-8 text-blue-600 font-bold hover:underline">Envoyer un autre avis</button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-8">
-            
-            {/* HONEYPOT Stealth */}
-            <input type="text" name="b_check" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
-            
-            {/* SÉLECTEUR D'ÉTOILES (UX Fluide) */}
-            <div className="flex flex-col items-center gap-4 mb-8">
-              <label className="font-bold text-slate-700">Quelle note donnez-vous ?</label>
-              
-              <div 
-                className="flex gap-2" 
-                onMouseLeave={() => setHover(0)}
-              >
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    className="transition-transform hover:scale-110 focus:outline-none"
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHover(star)}
-                  >
-                    <Star 
-                      size={40} 
-                      className={`${star <= (hover || rating) ? "fill-yellow-400 text-yellow-400" : "text-slate-300"}`} 
-                      fill={star <= (hover || rating) ? "currentColor" : "none"}
-                    />
-                  </button>
-                ))}
-              </div>
-              
-              <p className="text-sm font-bold text-blue-600 min-h-[20px]">
-                {rating === 5 ? "Génial ! 😍" : rating === 4 ? "Très bien 🙂" : rating === 3 ? "Moyen 😐" : "Pas satisfait 😞"}
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Prénom ou Pseudo</label>
-                <input required name="nom" className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="Ex: Jojo du 57" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700">Email (Reste privé • Non affiché)</label>
-                <input name="email" type="email" className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="jean@email.com" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Votre Commentaire</label>
-              <textarea required name="message" rows={4} className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="Racontez votre expérience..."></textarea>
-            </div>
-
-            {/* UPLOAD */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700">Une photo ou vidéo du résultat ? (Optionnel)</label>
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 hover:border-blue-300 transition-all"
-              >
-                <input ref={fileInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleFileChange} />
-                {file ? (
-                  <div className="flex items-center gap-2 text-green-600 font-bold">
-                    <CheckCircle size={20} />
-                    {file.name}
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex gap-2 mb-2">
-                      <Upload className="text-slate-400" />
-                      <Video className="text-slate-400" />
+        <div className="grid gap-4">
+          {avisPublies.length === 0 ? (
+            <p className="text-slate-500 italic">Aucun avis validé pour le moment.</p>
+          ) : (
+            avisPublies.map((avis) => (
+              <div key={avis.id} className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+                
+                {/* 1. HEADER : NOM + DATE */}
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    {/* Avatar Rond */}
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                      {avis.nom.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-sm text-slate-500">Cliquez pour ajouter une image ou une vidéo courte</span>
-                  </>
-                )}
-              </div>
-            </div>
+                    <div>
+                      {/* Nom en GRAS et en HAUT */}
+                      <h3 className="font-bold text-slate-900 text-base leading-tight">
+                        {avis.nom}
+                      </h3>
+                      {avis.verified && (
+                        <span className="text-[10px] uppercase font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-block mt-1">
+                          Client Vérifié
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
-            <button 
-              disabled={isSubmitting}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2"
-            >
-              {isSubmitting ? <Loader2 className="animate-spin" /> : <Send size={20} />}
-              Envoyer mon avis
-            </button>
-          </form>
-        )}
-      </div>
+                  {/* Date discrète à droite */}
+                  <div className="flex items-center gap-1 text-xs text-slate-400">
+                    <Calendar size={12} />
+                    {new Date(avis.created_at).toLocaleDateString('fr-FR')}
+                  </div>
+                </div>
 
-      {/* SECTION AVIS PUBLIÉS */}
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-slate-900 mb-10">Ce que disent mes clients</h2>
-        
-        <div className="grid gap-6">
-          {AVIS_CLIENTS.map((avis, index) => (
-            <div key={index} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6 hover:shadow-md transition-shadow">
-              <div className="flex-1">
+                {/* 2. ETOILES */}
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex text-yellow-400">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={18} fill={i < avis.note ? "currentColor" : "none"} className={i < avis.note ? "" : "text-slate-200"} />
+                      <Star key={i} size={16} fill={i < avis.note ? "currentColor" : "none"} className={i < avis.note ? "" : "text-slate-200"} />
                     ))}
                   </div>
-                  <span className="text-slate-400 text-sm">• {avis.date}</span>
-                </div>
-                
-                <div className="relative pl-6 mb-4">
-                  <Quote className="absolute top-0 left-0 text-blue-100 transform -scale-x-100" size={20} />
-                  <p className="text-slate-700 italic leading-relaxed">"{avis.message}"</p>
+                  <span className="text-slate-300 text-xs">|</span>
+                  <span className="text-slate-600 text-sm font-medium">{avis.note}/5</span>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
-                    {avis.nom.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-900">{avis.nom}</p>
-                    {avis.verified && <p className="text-xs text-blue-600 font-semibold">Client vérifié</p>}
-                  </div>
+                {/* 3. MESSAGE */}
+                <div className="relative bg-slate-50 p-4 rounded-lg">
+                  <Quote className="absolute top-2 left-2 text-slate-200 transform -scale-x-100 opacity-50" size={24} />
+                  <p className="text-slate-700 italic relative z-10 pl-4 text-sm leading-relaxed">
+                    "{avis.message}"
+                  </p>
                 </div>
+
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
-
     </div>
   );
 }
