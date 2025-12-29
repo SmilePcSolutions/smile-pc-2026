@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { supabase } from "@/lib/supabase"; // 👈 C'est cette ligne que le script cherchait !
+import { supabase } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
@@ -59,8 +59,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Champs obligatoires manquants." }, { status: 400 });
     }
 
-    // 4. SAUVEGARDE DANS SUPABASE (La Nouveauté !) 💾
-    // On enregistre les données brutes pour l'admin
+    // 4. SAUVEGARDE DANS SUPABASE (BDD) 💾
     const { error: dbError } = await supabase
       .from('avis')
       .insert([
@@ -69,13 +68,15 @@ export async function POST(request: Request) {
           note: Number(note),
           message: message,
           email: email,
-          approved: false, // Par défaut, c'est NON validé (sécurité)
+          approved: false, // Par défaut : en attente de validation
           verified: false
         }
       ]);
 
+    // 🚨 DEBUG : Si la BDD échoue, ON ARRÊTE TOUT et on affiche l'erreur
     if (dbError) {
       console.error("❌ Erreur Supabase:", dbError);
+      return NextResponse.json({ error: "Erreur BDD : " + dbError.message }, { status: 500 });
     }
 
     // 5. TRAITEMENT FICHIERS (Pour l'email)
@@ -95,7 +96,7 @@ export async function POST(request: Request) {
       attachments.push({ filename: sanitizeFilename(file.name), content: buf });
     }
 
-    // 6. ENVOI EMAIL (Comme avant)
+    // 6. ENVOI EMAIL
     const safeNom = escapeHtml(nom);
     const safeEmail = email ? escapeHtml(email) : "";
     const safeMessage = escapeHtml(message).replace(/\n/g, "<br>");
@@ -107,11 +108,11 @@ export async function POST(request: Request) {
       reply_to: email && email.includes("@") ? email : undefined,
       subject: `⭐ Nouvel avis de ${safeNom} : ${noteNum}/5`,
       html: `
-        <h2>Nouvel Avis Client (Sauvegardé en BDD ✅)</h2>
+        <h2>Nouvel Avis Client (Enregistré ✅)</h2>
         <p><strong>Client :</strong> ${safeNom} ${safeEmail ? `(${safeEmail})` : ""}</p>
         <p><strong>Note :</strong> ${noteNum}/5 ⭐</p>
         <blockquote style="background: #f9f9f9; padding: 15px; border-left: 4px solid #2563eb;">${safeMessage}</blockquote>
-        <p style="color: #666; font-size: 12px; margin-top: 20px;">Cet avis est en attente de validation dans ton futur panneau admin.</p>
+        <p style="color: #666; font-size: 12px; margin-top: 20px;">Cet avis est bien enregistré dans Supabase (table 'avis').</p>
       `,
       attachments,
     });
@@ -119,6 +120,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Erreur API Avis:", error);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur serveur : " + error.message }, { status: 500 });
   }
 }
