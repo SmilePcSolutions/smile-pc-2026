@@ -5,26 +5,27 @@ export const runtime = "nodejs";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Support étendu (iPhone HEIC, Vidéos)
+// Types de fichiers autorisés
 const ALLOWED_TYPES = [
   "image/jpeg", "image/png", "image/webp", "image/heic", "image/heif",
   "video/mp4", "video/quicktime", "video/webm",
 ];
 
 const MAX_FILE_SIZE = 4.5 * 1024 * 1024; // 4.5 Mo
-const MAX_FILES = 1; // 1 fichier pour les avis
+const MAX_FILES = 1;
 
-function escapeHtml(text: string) {
+// Fonctions utilitaires propres (Types explicites)
+function escapeHtml(text: string): string {
   if (!text) return "";
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
-function sanitizeFilename(name: string) {
+function sanitizeFilename(name: string): string {
   const base = name.split(/[/\\]/).pop() || "fichier";
   return base.replace(/[^a-zA-Z0-9._-]+/g, "_").slice(0, 80);
 }
 
-function originAllowed(request: Request) {
+function originAllowed(request: Request): boolean {
   const origin = request.headers.get("origin");
   if (!origin) return true;
   try {
@@ -36,12 +37,21 @@ function originAllowed(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    if (!originAllowed(request)) return NextResponse.json({ error: "Origin refusée." }, { status: 403 });
+    // 1. Sécurité : Vérification de l'origine
+    if (!originAllowed(request)) {
+      return NextResponse.json({ error: "Origin refusée." }, { status: 403 });
+    }
 
     const formData = await request.formData();
 
-    if (formData.get("honeypot_company")) return NextResponse.json({ success: true });
+    // 2. HONEYPOT "NINJA" (Validé par le Lead Dev)
+    // Si "b_check" est rempli, c'est un robot.
+    // On renvoie un succès (fake) pour qu'il parte sans insister.
+    if (formData.get("b_check")) {
+      return NextResponse.json({ success: true });
+    }
 
+    // 3. Récupération des données
     const nom = formData.get("nom") as string;
     const note = formData.get("note") as string;
     const message = formData.get("message") as string;
@@ -51,29 +61,39 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Champs obligatoires manquants." }, { status: 400 });
     }
 
-    const files = formData.getAll("files") as File[]; // On utilise bien "files"
+    // 4. Traitement sécurisé des fichiers
+    const files = formData.getAll("files") as File[];
     const realFiles = files.filter((f) => f && f.size > 0);
 
-    if (realFiles.length > MAX_FILES) return NextResponse.json({ error: "Trop de fichiers." }, { status: 400 });
+    if (realFiles.length > MAX_FILES) {
+      return NextResponse.json({ error: "Trop de fichiers." }, { status: 400 });
+    }
 
     const attachments = [];
     for (const file of realFiles) {
-      if (!ALLOWED_TYPES.includes(file.type)) return NextResponse.json({ error: "Format non supporté." }, { status: 400 });
-      if (file.size > MAX_FILE_SIZE) return NextResponse.json({ error: "Fichier trop lourd." }, { status: 400 });
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        return NextResponse.json({ error: "Format non supporté." }, { status: 400 });
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        return NextResponse.json({ error: "Fichier trop lourd." }, { status: 400 });
+      }
       
       const buf = Buffer.from(await file.arrayBuffer());
       attachments.push({ filename: sanitizeFilename(file.name), content: buf });
     }
 
+    // 5. Nettoyage des entrées (Protection XSS)
     const safeNom = escapeHtml(nom);
     const safeEmail = email ? escapeHtml(email) : "";
     const safeMessage = escapeHtml(message).replace(/\n/g, "<br>");
     const noteNum = Number(note);
 
+    // 6. Envoi email via Resend
     await resend.emails.send({
       from: "Smile PC Avis <onboarding@resend.dev>",
-      to: ["misterjojo057@gmail.com"], // Ton email perso
-      reply_to: email || undefined,
+      to: ["misterjojo057@gmail.com"],
+      // Sécurité : on vérifie que le reply_to est valide
+      reply_to: email && email.includes("@") ? email : undefined,
       subject: `⭐ Nouvel avis de ${safeNom} : ${noteNum}/5`,
       html: `
         <h2>Nouvel Avis Client</h2>
@@ -85,7 +105,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    console.error("Erreur API Avis:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

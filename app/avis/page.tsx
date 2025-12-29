@@ -1,6 +1,19 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, FormEvent, ChangeEvent } from "react";
 import { Star, Upload, CheckCircle, Loader2, Send, Video, Quote } from "lucide-react";
+
+// 👇 CONFIGURATION : Tes avis validés (Facile à éditer et scalable)
+// C'est ici que tu ajoutes les nouveaux avis, sans toucher au reste du code.
+const AVIS_CLIENTS = [
+  {
+    nom: "Annie",
+    date: "Il y a quelques heures",
+    note: 5,
+    message: "Franchement je vois la différence depuis que j'ai été chez Smile PC. Mon ordinateur est plus rapide, plus stable, c'est à recommander les yeux fermés.",
+    verified: true
+  },
+  // Copie le bloc { ... }, pour ajouter le prochain avis ici !
+];
 
 export default function AvisPage() {
   const [rating, setRating] = useState(5);
@@ -10,35 +23,54 @@ export default function AvisPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
 
-  const handleSubmit = async (e: any) => {
+  // 🛡️ TYPAGE STRICT (Niveau Senior)
+  // On utilise les vrais types React pour éviter tout bug invisible.
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const formData = new FormData(e.target);
+    // currentTarget assure qu'on cible bien le formulaire
+    const formData = new FormData(e.currentTarget);
     formData.append('note', rating.toString());
+    
     if (file) {
       formData.append('files', file);
     }
 
     try {
-      const res = await fetch('/api/avis', { method: 'POST', body: formData });
-      const data = await res.json();
+      const res = await fetch('/api/avis', { 
+        method: 'POST', 
+        body: formData 
+      });
+
+      // Gestion d'erreur robuste
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Erreur lors de l'envoi");
+      }
       
-      if (!res.ok) throw new Error(data.error || "Erreur envoi");
-      
+      // Succès
       setIsSuccess(true);
       setFile(null);
-      e.target.reset();
       setRating(5);
-    } catch (err: any) {
-      alert("Oups : " + err.message);
+      
+      // Reset du formulaire via l'API HTML native
+      e.currentTarget.reset();
+
+    } catch (err: unknown) {
+      // Gestion d'erreur typée (on vérifie si c'est bien une Erreur standard)
+      const message = err instanceof Error ? err.message : "Une erreur inconnue est survenue";
+      alert("Oups : " + message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleFileChange = (e: any) => {
-    if (e.target.files?.[0]) setFile(e.target.files[0]);
+  // 🛡️ TYPAGE STRICT pour l'upload
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
   };
 
   return (
@@ -64,7 +96,9 @@ export default function AvisPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-8">
-            <input type="text" name="honeypot_company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+            
+            {/* 🛡️ HONEYPOT : Nom "b_check" pour éviter l'autofill iPhone */}
+            <input type="text" name="b_check" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
             
             {/* SÉLECTEUR D'ÉTOILES */}
             <div className="flex flex-col items-center gap-4 mb-8">
@@ -144,43 +178,41 @@ export default function AvisPage() {
         )}
       </div>
 
-      {/* ✅ SECTION AVIS PUBLIÉS (AJOUTÉE) */}
+      {/* ✅ LISTE DES AVIS (Automatique via la constante AVIS_CLIENTS) */}
       <div className="max-w-3xl mx-auto">
         <h2 className="text-3xl font-bold text-center text-slate-900 mb-10">Ce que disent mes clients</h2>
         
         <div className="grid gap-6">
-          
-          {/* AVIS 1 : Annie */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6 hover:shadow-md transition-shadow">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex text-yellow-400">
-                  {[1,2,3,4,5].map(i => <Star key={i} size={18} fill="currentColor" />)}
+          {AVIS_CLIENTS.map((avis, index) => (
+            <div key={index} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6 hover:shadow-md transition-shadow">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex text-yellow-400">
+                    {/* Génération dynamique des étoiles selon la note */}
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={18} fill={i < avis.note ? "currentColor" : "none"} className={i < avis.note ? "" : "text-slate-200"} />
+                    ))}
+                  </div>
+                  <span className="text-slate-400 text-sm">• {avis.date}</span>
                 </div>
-                <span className="text-slate-400 text-sm">• Il y a quelques heures</span>
-              </div>
-              
-              <div className="relative pl-6 mb-4">
-                <Quote className="absolute top-0 left-0 text-blue-100 transform -scale-x-100" size={20} />
-                <p className="text-slate-700 italic leading-relaxed">
-                  "Franchement je vois la différence depuis que j'ai été chez Smile PC. Mon ordinateur est plus rapide, plus stable, c'est à recommander les yeux fermés."
-                </p>
-              </div>
+                
+                <div className="relative pl-6 mb-4">
+                  <Quote className="absolute top-0 left-0 text-blue-100 transform -scale-x-100" size={20} />
+                  <p className="text-slate-700 italic leading-relaxed">"{avis.message}"</p>
+                </div>
 
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
-                  A
-                </div>
-                <div>
-                  <p className="font-bold text-slate-900">Annie</p>
-                  <p className="text-xs text-blue-600 font-semibold">Client vérifié</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                    {avis.nom.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900">{avis.nom}</p>
+                    {avis.verified && <p className="text-xs text-blue-600 font-semibold">Client vérifié</p>}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Tu pourras copier/coller le bloc ci-dessus pour ajouter d'autres avis manuellement */}
-
+          ))}
         </div>
       </div>
 
