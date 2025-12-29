@@ -2,8 +2,7 @@
 import { useState, useRef, FormEvent, ChangeEvent } from "react";
 import { Star, Upload, CheckCircle, Loader2, Send, Video, Quote } from "lucide-react";
 
-// 👇 CONFIGURATION : Tes avis validés (Facile à éditer et scalable)
-// C'est ici que tu ajoutes les nouveaux avis, sans toucher au reste du code.
+// 👇 CONFIGURATION : Tes avis validés
 const AVIS_CLIENTS = [
   {
     nom: "Annie",
@@ -12,7 +11,6 @@ const AVIS_CLIENTS = [
     message: "Franchement je vois la différence depuis que j'ai été chez Smile PC. Mon ordinateur est plus rapide, plus stable, c'est à recommander les yeux fermés.",
     verified: true
   },
-  // Copie le bloc { ... }, pour ajouter le prochain avis ici !
 ];
 
 export default function AvisPage() {
@@ -23,13 +21,11 @@ export default function AvisPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
 
-  // 🛡️ TYPAGE STRICT (Niveau Senior)
-  // On utilise les vrais types React pour éviter tout bug invisible.
+  // 🛡️ TYPAGE STRICT (Senior)
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // currentTarget assure qu'on cible bien le formulaire
     const formData = new FormData(e.currentTarget);
     formData.append('note', rating.toString());
     
@@ -43,22 +39,17 @@ export default function AvisPage() {
         body: formData 
       });
 
-      // Gestion d'erreur robuste
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || "Erreur lors de l'envoi");
       }
       
-      // Succès
       setIsSuccess(true);
       setFile(null);
       setRating(5);
-      
-      // Reset du formulaire via l'API HTML native
       e.currentTarget.reset();
 
     } catch (err: unknown) {
-      // Gestion d'erreur typée (on vérifie si c'est bien une Erreur standard)
       const message = err instanceof Error ? err.message : "Une erreur inconnue est survenue";
       alert("Oups : " + message);
     } finally {
@@ -66,7 +57,6 @@ export default function AvisPage() {
     }
   };
 
-  // 🛡️ TYPAGE STRICT pour l'upload
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
@@ -97,13 +87,18 @@ export default function AvisPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-8">
             
-            {/* 🛡️ HONEYPOT : Nom "b_check" pour éviter l'autofill iPhone */}
+            {/* HONEYPOT Stealth */}
             <input type="text" name="b_check" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
             
-            {/* SÉLECTEUR D'ÉTOILES */}
+            {/* SÉLECTEUR D'ÉTOILES (CORRIGÉ UX FLUIDE) */}
             <div className="flex flex-col items-center gap-4 mb-8">
               <label className="font-bold text-slate-700">Quelle note donnez-vous ?</label>
-              <div className="flex gap-2">
+              
+              {/* ✨ MODIFICATION ICI : onMouseLeave est sur le conteneur principal */}
+              <div 
+                className="flex gap-2" 
+                onMouseLeave={() => setHover(0)} // C'est ici que ça se passe !
+              >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
@@ -111,7 +106,7 @@ export default function AvisPage() {
                     className="transition-transform hover:scale-110 focus:outline-none"
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHover(star)}
-                    onMouseLeave={() => setHover(0)}
+                    // ❌ On a supprimé le onMouseLeave individuel qui causait le clignotement
                   >
                     <Star 
                       size={40} 
@@ -121,6 +116,7 @@ export default function AvisPage() {
                   </button>
                 ))}
               </div>
+              
               <p className="text-sm font-bold text-blue-600 min-h-[20px]">
                 {rating === 5 ? "Génial ! 😍" : rating === 4 ? "Très bien 🙂" : rating === 3 ? "Moyen 😐" : "Pas satisfait 😞"}
               </p>
@@ -178,7 +174,7 @@ export default function AvisPage() {
         )}
       </div>
 
-      {/* ✅ LISTE DES AVIS (Automatique via la constante AVIS_CLIENTS) */}
+      {/* SECTION AVIS PUBLIÉS */}
       <div className="max-w-3xl mx-auto">
         <h2 className="text-3xl font-bold text-center text-slate-900 mb-10">Ce que disent mes clients</h2>
         
@@ -188,7 +184,6 @@ export default function AvisPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex text-yellow-400">
-                    {/* Génération dynamique des étoiles selon la note */}
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} size={18} fill={i < avis.note ? "currentColor" : "none"} className={i < avis.note ? "" : "text-slate-200"} />
                     ))}
