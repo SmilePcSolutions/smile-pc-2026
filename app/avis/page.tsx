@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { Star, Upload, CheckCircle, Loader2, Send, Video } from "lucide-react";
+import { Star, Upload, CheckCircle, Loader2, Send, Video, Quote } from "lucide-react";
 
 export default function AvisPage() {
   const [rating, setRating] = useState(5);
@@ -44,15 +44,17 @@ export default function AvisPage() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       
+      {/* HEADER */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-slate-900 mb-4">Votre avis compte ! ⭐</h1>
         <p className="text-slate-600">Aidez-nous à nous améliorer et partagez votre expérience.</p>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-slate-100">
+      {/* FORMULAIRE */}
+      <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-slate-100 mb-24">
         
         {isSuccess ? (
-          <div className="text-center py-12">
+          <div className="text-center py-12 animate-fade-in-up">
             <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle size={40} />
             </div>
@@ -62,15 +64,7 @@ export default function AvisPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-8">
-      {/* 🛡️ SÉCURITÉ : Honeypot Anti-Bot (Invisible) */}
-      <input
-        type="text"
-        name="honeypot_company"
-        tabIndex={-1}
-        autoComplete="off"
-        className="hidden"
-        aria-hidden="true"
-      />
+            <input type="text" name="honeypot_company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
             
             {/* SÉLECTEUR D'ÉTOILES */}
             <div className="flex flex-col items-center gap-4 mb-8">
@@ -88,11 +82,12 @@ export default function AvisPage() {
                     <Star 
                       size={40} 
                       className={`${star <= (hover || rating) ? "fill-yellow-400 text-yellow-400" : "text-slate-300"}`} 
+                      fill={star <= (hover || rating) ? "currentColor" : "none"}
                     />
                   </button>
                 ))}
               </div>
-              <p className="text-sm font-bold text-blue-600">
+              <p className="text-sm font-bold text-blue-600 min-h-[20px]">
                 {rating === 5 ? "Génial ! 😍" : rating === 4 ? "Très bien 🙂" : rating === 3 ? "Moyen 😐" : "Pas satisfait 😞"}
               </p>
             </div>
@@ -113,7 +108,7 @@ export default function AvisPage() {
               <textarea required name="message" rows={4} className="w-full p-4 bg-slate-50 rounded-xl border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" placeholder="Racontez votre expérience..."></textarea>
             </div>
 
-            {/* UPLOAD PHOTO / VIDÉO */}
+            {/* UPLOAD */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">Une photo ou vidéo du résultat ? (Optionnel)</label>
               <div 
@@ -149,17 +144,45 @@ export default function AvisPage() {
         )}
       </div>
 
-      {/* 👇 ZONE DES FUTURS AVIS 👇
-         Quand tu auras reçu des vrais avis, tu pourras copier le code HTML ici 
-         pour les afficher. Pour l'instant, c'est caché.
-      
-      <div className="mt-20">
-        <h2 className="text-2xl font-bold text-center mb-10">Derniers avis clients</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-           Ici tu colleras tes futurs avis... 
+      {/* ✅ SECTION AVIS PUBLIÉS (AJOUTÉE) */}
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold text-center text-slate-900 mb-10">Ce que disent mes clients</h2>
+        
+        <div className="grid gap-6">
+          
+          {/* AVIS 1 : Annie */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6 hover:shadow-md transition-shadow">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex text-yellow-400">
+                  {[1,2,3,4,5].map(i => <Star key={i} size={18} fill="currentColor" />)}
+                </div>
+                <span className="text-slate-400 text-sm">• Il y a quelques heures</span>
+              </div>
+              
+              <div className="relative pl-6 mb-4">
+                <Quote className="absolute top-0 left-0 text-blue-100 transform -scale-x-100" size={20} />
+                <p className="text-slate-700 italic leading-relaxed">
+                  "Franchement je vois la différence depuis que j'ai été chez Smile PC. Mon ordinateur est plus rapide, plus stable, c'est à recommander les yeux fermés."
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                  A
+                </div>
+                <div>
+                  <p className="font-bold text-slate-900">Annie</p>
+                  <p className="text-xs text-blue-600 font-semibold">Client vérifié</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tu pourras copier/coller le bloc ci-dessus pour ajouter d'autres avis manuellement */}
+
         </div>
-      </div> 
-      */}
+      </div>
 
     </div>
   );
