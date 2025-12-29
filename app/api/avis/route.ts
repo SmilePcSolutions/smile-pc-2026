@@ -44,9 +44,7 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
 
-    // 2. HONEYPOT "NINJA" (Validé par le Lead Dev)
-    // Si "b_check" est rempli, c'est un robot.
-    // On renvoie un succès (fake) pour qu'il parte sans insister.
+    // 2. HONEYPOT "NINJA"
     if (formData.get("b_check")) {
       return NextResponse.json({ success: true });
     }
@@ -92,7 +90,6 @@ export async function POST(request: Request) {
     await resend.emails.send({
       from: "Smile PC Avis <onboarding@resend.dev>",
       to: ["misterjojo057@gmail.com"],
-      // Sécurité : on vérifie que le reply_to est valide
       reply_to: email && email.includes("@") ? email : undefined,
       subject: `⭐ Nouvel avis de ${safeNom} : ${noteNum}/5`,
       html: `

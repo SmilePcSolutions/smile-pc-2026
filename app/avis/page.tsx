@@ -26,7 +26,11 @@ export default function AvisPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
+    // 💡 ASTUCE SENIOR : On sauvegarde la référence du formulaire AVANT l'attente (await)
+    // Cela évite le bug "null" lors du reset à la fin
+    const form = e.currentTarget; 
+    const formData = new FormData(form);
+    
     formData.append('note', rating.toString());
     
     if (file) {
@@ -44,10 +48,13 @@ export default function AvisPage() {
         throw new Error(errorData.error || "Erreur lors de l'envoi");
       }
       
+      // Succès
       setIsSuccess(true);
       setFile(null);
       setRating(5);
-      e.currentTarget.reset();
+      
+      // ✅ RESET SÉCURISÉ (On utilise la variable sauvegardée au début)
+      form.reset();
 
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Une erreur inconnue est survenue";
@@ -90,14 +97,13 @@ export default function AvisPage() {
             {/* HONEYPOT Stealth */}
             <input type="text" name="b_check" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
             
-            {/* SÉLECTEUR D'ÉTOILES (CORRIGÉ UX FLUIDE) */}
+            {/* SÉLECTEUR D'ÉTOILES (UX Fluide) */}
             <div className="flex flex-col items-center gap-4 mb-8">
               <label className="font-bold text-slate-700">Quelle note donnez-vous ?</label>
               
-              {/* ✨ MODIFICATION ICI : onMouseLeave est sur le conteneur principal */}
               <div 
                 className="flex gap-2" 
-                onMouseLeave={() => setHover(0)} // C'est ici que ça se passe !
+                onMouseLeave={() => setHover(0)}
               >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
@@ -106,7 +112,6 @@ export default function AvisPage() {
                     className="transition-transform hover:scale-110 focus:outline-none"
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHover(star)}
-                    // ❌ On a supprimé le onMouseLeave individuel qui causait le clignotement
                   >
                     <Star 
                       size={40} 
