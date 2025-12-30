@@ -12,6 +12,20 @@ export function ThemeToggle() {
 
   if (!mounted) return <div className="w-10 h-10" />;
 
+  const sunClass = [
+    "absolute inset-0 w-6 h-6 text-yellow-500 transition-all duration-500 transform",
+    theme === "dark"
+      ? "rotate-90 opacity-0 scale-50"
+      : "rotate-0 opacity-100 scale-100",
+  ].join(" ");
+
+  const moonClass = [
+    "absolute inset-0 w-6 h-6 text-blue-400 transition-all duration-500 transform",
+    theme === "dark"
+      ? "rotate-0 opacity-100 scale-100"
+      : "-rotate-90 opacity-0 scale-50",
+  ].join(" ");
+
   return (
     <button
       onClick={toggleTheme}
@@ -20,12 +34,8 @@ export function ThemeToggle() {
       className="relative p-2 rounded-full transition-colors duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
     >
       <div className="relative w-6 h-6">
-        <Sun
-          className={\bsolute inset-0 w-6 h-6 text-yellow-500 transition-all duration-500 transform \\}
-        />
-        <Moon
-          className={\bsolute inset-0 w-6 h-6 text-blue-400 transition-all duration-500 transform \\}
-        />
+        <Sun className={sunClass} />
+        <Moon className={moonClass} />
       </div>
     </button>
   );
