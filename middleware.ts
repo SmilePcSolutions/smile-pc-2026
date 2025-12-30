@@ -5,14 +5,17 @@ const ADMIN_PATH = "/bunker-smile-758";
 
 export function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith(ADMIN_PATH)) {
-    const auth = request.cookies.get("admin_session");
-    if (!auth) return NextResponse.redirect(new URL("/", request.url));
-
+    // 🟡 Note Lead Dev : Pas de blocage ici pour laisser passer le login (Fix iOS)
+    // Le contrôle d'accès strict se fait dans la page AdminPage.
+    
     const res = NextResponse.next();
+    
+    // HEADERS DE SÉCURITÉ (BUNKER)
     res.headers.set("X-Frame-Options", "DENY");
     res.headers.set("X-Content-Type-Options", "nosniff");
     res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
     res.headers.set("Content-Security-Policy", "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'");
+    
     return res;
   }
   return NextResponse.next();

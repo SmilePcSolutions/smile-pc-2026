@@ -5,17 +5,28 @@ import { cookies } from "next/headers";
 import crypto from "crypto";
 
 export async function loginAdmin(formData: FormData) {
+  // Sécurité : Délai anti-brute force (2s)
   await new Promise((resolve) => setTimeout(resolve, 2000));
+  
   const input = ((formData.get("password") as string) || "").trim();
   const secret = (process.env.ADMIN_PASSWORD || "").trim();
+  
   let match = false;
+  // Sécurité : Comparaison à temps constant
   if (secret && input && input.length === secret.length) {
     match = crypto.timingSafeEqual(Buffer.from(input), Buffer.from(secret));
   }
+  
   if (!match) return { success: false, error: "Incorrect" };
   
   const store = await cookies();
-  store.set("admin_session", "true", { maxAge: 86400, httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", path: "/" });
+  store.set("admin_session", "true", { 
+    maxAge: 86400, 
+    httpOnly: true, 
+    secure: process.env.NODE_ENV === "production", 
+    sameSite: "strict", 
+    path: "/" 
+  });
   return { success: true };
 }
 
@@ -36,6 +47,6 @@ export async function deleteAvis(id: number) {
 
 export async function logout() {
   const store = await cookies();
-  store.delete("admin_session"); // CORRECTION ICI (1 seul argument)
+  store.delete("admin_session"); // ✅ Signature Vercel correcte
   revalidatePath("/bunker-smile-758");
 }

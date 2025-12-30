@@ -13,6 +13,7 @@ export default async function AdminPage() {
       <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans">
         <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 w-full max-w-md">
           <div className="text-center mb-8"><div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4"><Lock size={32} /></div><h1 className="text-2xl font-bold text-slate-900">Admin Sécurisé</h1></div>
+          {/* Wrapper async pour compatibilité TypeScript Vercel */}
           <form action={async (formData) => { "use server"; await loginAdmin(formData); }} className="space-y-4">
             <input type="password" name="password" placeholder="Mot de passe..." required className="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
             <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg">Déverrouiller</button>

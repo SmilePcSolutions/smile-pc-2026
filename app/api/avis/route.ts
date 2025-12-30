@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   try {
     if (!checkOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     const form = await req.formData();
-    if (form.get("b_check")) return NextResponse.json({ success: true }); // Honeypot
+    if (form.get("b_check")) return NextResponse.json({ success: true });
 
     const nom = (form.get("nom") as string || "").trim();
     const msg = (form.get("message") as string || "").trim();
