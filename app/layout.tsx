@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"; // ✅ On utilise Google Fonts (automatique)
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Link from "next/link";
 import { Monitor, Menu } from "lucide-react";
 
-// ✅ Chargement automatique de la police Inter
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -26,7 +25,7 @@ export default function RootLayout({
     <html lang="fr" suppressHydrationWarning>
       <body
         className={[
-          inter.className, // ✅ Application de la police
+          inter.className,
           "antialiased",
           "bg-slate-50",
           "dark:bg-slate-900",
@@ -58,14 +57,24 @@ export default function RootLayout({
                 </span>
               </Link>
 
+              {/* MENU COMPLET RESTAURÉ */}
               <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
                 <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition">
                   Accueil
                 </Link>
+                {/* Liens ajoutés : assure-toi que les pages existent ou redirigent quelque part */}
+                <Link href="/prestations" className="hover:text-blue-600 dark:hover:text-blue-400 transition">
+                  Prestations
+                </Link>
                 <Link href="/avis" className="hover:text-blue-600 dark:hover:text-blue-400 transition">
                   Avis Clients
                 </Link>
+                <Link href="/a-propos" className="hover:text-blue-600 dark:hover:text-blue-400 transition">
+                  À propos
+                </Link>
+                
                 <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-2" />
+                
                 <ThemeToggle />
                 <a
                   href="mailto:contact@smilepcsolutions.fr"

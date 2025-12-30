@@ -20,35 +20,35 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [manual, setManual] = useState(false);
 
   useEffect(() => {
+    // Si l'utilisateur a cliqué manuellement, on arrête le cycle solaire
     if (manual) return;
 
-    const calculateSolar = () => {
+    let timeoutId: NodeJS.Timeout;
+
+    const checkSolar = () => {
       const now = new Date();
-      // Coordonnées approximatives Grand Est (Metz)
-      const times = SunCalc.getTimes(now, 49.1, 6.1);
+      // Coordonnées Moyeuvre-Grande (approx)
+      const times = SunCalc.getTimes(now, 49.2, 6.0);
 
       const isNight = now > times.sunset || now < times.sunrise;
       setTheme(isNight ? "dark" : "light");
 
-      const nextChange = isNight ? times.sunrise : times.sunset;
-      
-      // Sécurité temporelle (si le changement est passé, on revérifie dans 1h)
-      if (nextChange <= now) {
-         const fallbackTimer = setTimeout(calculateSolar, 60 * 60 * 1000);
-         return () => clearTimeout(fallbackTimer);
-      }
+      // Calcul du prochain événement (Lever ou Coucher)
+      const nextEvent = isNight ? times.sunrise : times.sunset;
+      let delay = nextEvent.getTime() - now.getTime();
 
-      const delay = nextChange.getTime() - now.getTime();
-      
-      if (delay > 0) {
-        const timer = setTimeout(() => {
-          setTheme(isNight ? "light" : "dark");
-        }, delay);
-        return () => clearTimeout(timer);
-      }
+      // Sécurité : si le calcul donne un délai négatif (ex: juste après minuit), on réessaie dans 10 min
+      if (delay <= 0) delay = 1000 * 60 * 10;
+
+      // On programme la prochaine vérification récursivement
+      timeoutId = setTimeout(checkSolar, delay);
     };
 
-    calculateSolar();
+    // Lancement immédiat
+    checkSolar();
+
+    // Nettoyage propre lors du démontage ou changement de mode
+    return () => clearTimeout(timeoutId);
   }, [manual]);
 
   useEffect(() => {
