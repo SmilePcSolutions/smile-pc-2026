@@ -1,40 +1,20 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import JsonLd from "@/components/JsonLd";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import Link from "next/link";
+import { Monitor, Menu } from "lucide-react";
 
-const inter = Inter({ subsets: ["latin"] });
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
 
 export const metadata: Metadata = {
-  title: {
-    template: "%s | Smile PC Solutions",
-    default: "Smile PC Solutions - Dépannage Informatique à Moyeuvre-Grande",
-  },
-  description: "Expert en dépannage informatique à domicile, maintenance PC/Mac, suppression de virus et formation. Intervention rapide sur Moyeuvre-Grande (57) et alentours.",
-  metadataBase: new URL("https://www.smilepcsolutions.fr"),
-  
-  // 👇 TON CODE DE VALIDATION GOOGLE EST ICI 👇
-  verification: {
-    google: 'Cs0rhhmDH6XpUNa5VQRnIHcT2mxWaa7isY2hXeLQsys',
-  },
-  
-  alternates: {
-    canonical: "https://www.smilepcsolutions.fr/",
-  },
-  openGraph: {
-    title: "Smile PC Solutions - Dépannage Informatique à Domicile",
-    description: "Besoin d'aide avec votre PC ? Je me déplace chez vous à Moyeuvre-Grande et alentours. Devis gratuit.",
-    url: "https://www.smilepcsolutions.fr",
-    siteName: "Smile PC Solutions",
-    locale: "fr_FR",
-    type: "website",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  title: "Smile PC Solutions | Dépannage Informatique Moyeuvre-Grande",
+  description: "Réparation PC, Mac, suppression virus à domicile. Intervention rapide 57.",
 };
 
 export default function RootLayout({
@@ -43,15 +23,44 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="scroll-smooth">
-      <body className={`${inter.className} antialiased text-slate-900 bg-white`}>
-        <JsonLd />
-        <Header />
-        {/* Padding-top de 80px (pt-20) pour que le menu fixe ne cache pas le texte */}
-        <main className="min-h-screen flex flex-col pt-20">
-          {children}
-        </main>
-        <Footer />
+    <html lang="fr" suppressHydrationWarning>
+      <body className={\\ antialiased bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300\}>
+        <ThemeProvider>
+          <nav className="fixed top-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 z-50 transition-colors duration-300">
+            <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+              
+              <Link href="/" className="flex items-center gap-2 font-bold text-xl text-slate-900 dark:text-white group">
+                <div className="bg-blue-600 text-white p-1.5 rounded-lg transition-transform group-hover:scale-110"><Monitor size={20} /></div>
+                <span>Smile<span className="text-blue-600">PC</span></span>
+              </Link>
+              
+              <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition">Accueil</Link>
+                <Link href="/avis" className="hover:text-blue-600 dark:hover:text-blue-400 transition">Avis Clients</Link>
+                <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+                <ThemeToggle />
+                <a href="mailto:contact@smilepcsolutions.fr" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full transition shadow-md hover:shadow-lg ml-2">
+                  Me Contacter
+                </a>
+              </div>
+
+              <div className="md:hidden flex items-center gap-4">
+                 <ThemeToggle />
+                 <button className="p-2 text-slate-700 dark:text-slate-200"><Menu size={24} /></button>
+              </div>
+            </div>
+          </nav>
+
+          <main className="pt-20 min-h-screen">
+            {children}
+          </main>
+          
+          <footer className="bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900 mt-20 py-12 transition-colors duration-300">
+            <div className="max-w-6xl mx-auto px-4 text-center text-slate-500 dark:text-slate-400 text-sm">
+              <p>© {new Date().getFullYear()} Smile PC Solutions. Tous droits réservés.</p>
+            </div>
+          </footer>
+        </ThemeProvider>
       </body>
     </html>
   );
