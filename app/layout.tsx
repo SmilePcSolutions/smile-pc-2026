@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Inter } from "next/font/google"; // ✅ On utilise Google Fonts (automatique)
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Link from "next/link";
 import { Monitor, Menu } from "lucide-react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+// ✅ Chargement automatique de la police Inter
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({
     <html lang="fr" suppressHydrationWarning>
       <body
         className={[
-          geistSans.variable,
+          inter.className, // ✅ Application de la police
           "antialiased",
           "bg-slate-50",
           "dark:bg-slate-900",
@@ -37,7 +37,7 @@ export default function RootLayout({
         ].join(" ")}
       >
         <ThemeProvider>
-          {/* HEADER SAFE MODE */}
+          {/* HEADER */}
           <nav
             className={[
               "fixed top-0 w-full z-50 transition-colors duration-300",
