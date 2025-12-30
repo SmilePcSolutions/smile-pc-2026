@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/bunker-smile-758/', // ⛔ Zone interdite aux robots
+      disallow: '/bunker-smile-758/', // ⛔ Zone Interdite
     },
-    sitemap: 'https://smilepcsolutions.fr/sitemap.xml', // ✅ Bonnes pratiques SEO
+    sitemap: 'https://smilepcsolutions.fr/sitemap.xml', // ✅ SEO Platinum
   };
 }

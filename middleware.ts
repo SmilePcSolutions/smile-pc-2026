@@ -4,13 +4,20 @@ import type { NextRequest } from "next/server";
 const ADMIN_PATH = "/bunker-smile-758";
 
 export function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith(ADMIN_PATH)) {
-    // 🟡 Note Lead Dev : Pas de blocage ici pour laisser passer le login (Fix iOS)
-    // Le contrôle d'accès strict se fait dans la page AdminPage.
-    
+  const { pathname } = request.nextUrl;
+
+  // 👻 RÈGLE FURTIVE : Si on tente d'accéder aux anciens chemins, on renvoie à l'accueil incognito.
+  // Ni vu, ni connu. Pas d'erreur 404 qui donne des indices.
+  if (pathname.startsWith("/admin") || pathname.startsWith("/login") || pathname.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  // 🛡️ RÈGLE BUNKER : Protection de la vraie zone admin
+  if (pathname.startsWith(ADMIN_PATH)) {
+    // On laisse passer pour permettre l'affichage du login (Fix iOS)
     const res = NextResponse.next();
     
-    // HEADERS DE SÉCURITÉ (BUNKER)
+    // Casque blindé (Headers de sécurité)
     res.headers.set("X-Frame-Options", "DENY");
     res.headers.set("X-Content-Type-Options", "nosniff");
     res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -18,6 +25,16 @@ export function middleware(request: NextRequest) {
     
     return res;
   }
+  
   return NextResponse.next();
 }
-export const config = { matcher: "/bunker-smile-758/:path*" };
+
+// On surveille tout : le bunker ET les leurres
+export const config = { 
+  matcher: [
+    "/bunker-smile-758/:path*", 
+    "/admin/:path*",
+    "/login/:path*",
+    "/dashboard/:path*"
+  ] 
+};
